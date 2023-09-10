@@ -3,16 +3,18 @@
 
 #define FRAMERATE 30
 
-DisplayManager displayManager;
+//DisplayManager displayManager;
 AudioManager audioManager;
-int16_t framerate;
 
 void setup() {
-    displayManager.setup();
+    Serial.begin(9600);
+
+    //displayManager.setup();
     audioManager.setup();
 }
 
 void loop() {
-    displayManager.loop();
-    delay(FRAMERATE); // Optional delay to reduce screen flickering
+    //displayManager.loop();
+    audioManager.loop();
+    //delay(FRAMERATE); // Optional delay to reduce screen flickering
 }

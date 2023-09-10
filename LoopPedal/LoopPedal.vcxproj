@@ -82,10 +82,12 @@
   <ItemGroup>
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="DisplayManager.cpp" />
+    <ClCompile Include="DrumSound.cpp" />
     <ClCompile Include="LoopPedal.ino">
       <FileType>CppCode</FileType>
       <DeploymentContent>true</DeploymentContent>
     </ClCompile>
+    <ClCompile Include="Sequencer.cpp" />
     <ClCompile Include="Shape.cpp" />
     <ClCompile Include="ShapeClock.cpp" />
     <ClCompile Include="ShapeRectangle.cpp" />
@@ -100,6 +102,8 @@
   <ItemGroup>
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="DisplayManager.h" />
+    <ClInclude Include="DrumSound.h" />
+    <ClInclude Include="Sequencer.h" />
     <ClInclude Include="Shape.h" />
     <ClInclude Include="ShapeClock.h" />
     <ClInclude Include="ShapeRectangle.h" />
