@@ -10,16 +10,16 @@
 #endif
 
 #pragma once
-#include <Audio.h>  // Include the Teensy Audio library
+#include <Audio.h>
 
 class DrumSound {
 public:
     DrumSound(int mixerChannel, AudioMixer4& mixer);
-    void trigger();
+    virtual ~DrumSound() = default;
+    virtual void trigger(int velocity);
+    virtual void update(int resolution);
 
-private:
-    AudioSynthSimpleDrum drumSynth;
-    AudioConnection patchCord;
+protected:
     bool debugMode = true;
 };
 

@@ -1,5 +1,3 @@
-// Sequencer.h
-
 #ifndef _SEQUENCER_h
 #define _SEQUENCER_h
 
@@ -12,7 +10,10 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 #include "DrumSound.h"
+#include "DrumSoundKick.h"
+#include "DrumSoundSnare.h"
 
 class Sequencer {
 public:
@@ -20,9 +21,19 @@ public:
     void newSequence();
     void newDrums();
     void nextStep();
+    void update(int deltaTime);
+
+    std::unique_ptr<DrumSound> kick;
+    std::unique_ptr<DrumSound> snare;
+    std::unique_ptr<DrumSound> clap;
+    std::unique_ptr<DrumSound> openHiHat;
+    std::unique_ptr<DrumSound> closedHiHat;
+    std::unique_ptr<DrumSound> highTom;
+    std::unique_ptr<DrumSound> lowTom;
+    std::unique_ptr<DrumSound> cymbal;
 
 private:
-    DrumSound kick, snare, clap, openHiHat, closedHiHat, highTom, lowTom, cymbal;
+    static const int SEQUENCE_STEPS = 16; // Number of steps in a sequence
     std::vector<std::vector<int>> sequenceSteps;  // 2D vector for sequences
     bool debugMode = false;
     int currentStep = 0;

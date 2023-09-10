@@ -8,19 +8,24 @@
 #endif
 
 #include <Audio.h>
+#include <memory>
 #include "Sequencer.h"
+
+#define UPDATE_DELTATIME 25000 // How often update is run, resulting in its resolution
 
 class AudioManager {
 public:
     AudioManager();
     void setup();
     void loop();
-    static void drumPatternISR();
+    static void stepSequence();
+    static void update();
 
 private:
     static AudioManager* instance;
-    //Sequencer sequencer;
+    std::unique_ptr<Sequencer> sequencer;
     IntervalTimer drumTimer;
+    IntervalTimer updateTimer;
 
     AudioControlSGTL5000 sgtl5000; // SGTL5000 audio codec control object
     AudioInputI2S audioInput; // Stereo audio input
@@ -40,7 +45,7 @@ private:
 
     uint32_t lastTriggerTime = 0; // Used to trigger drum sound periodically
 
-    DrumSound kick;
+    int sixteenthNote = 125000;
 
 };
 
