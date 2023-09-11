@@ -14,23 +14,14 @@
 class Envelope {
 public:
     Envelope(float maxValue = 1.0f, float minValue = 0.0f, float attackTime = 5.0f, float decayTime = 500.0f, float curvedness = 1.0f);
-
     void start();
-
     void update(int deltaTime);
-
     float read() const;
-
     void setMaxValue(float newMaxValue);
-
     void setMinValue(float newMinValue);
-
     void setAttackTime(float newAttackTime); // In ms
-
     void setDecayTime(float newDecayTime); // In ms
-
     void setCurvedness(float curve); // 1.0 = linear, less = fast-then-slow, more = slow-then-fast
-
     bool isActive() const;
 
 private:

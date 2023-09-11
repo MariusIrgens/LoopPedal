@@ -31,17 +31,16 @@ private:
     AudioInputI2S audioInput; // Stereo audio input
     AudioAmplifier amplifier; // Amplifier for volume boost
     AudioOutputI2S audioOutput; // Stereo audio output
-    AudioSynthSimpleDrum drum; // Simple drum sound synthesis
-    AudioMixer4 mixer1;
-    AudioMixer4 mixer2; 
-    AudioMixer4 mixer3;
+    AudioMixer4 mixerKST;
+    AudioMixer4 mixerHCC; 
+    AudioMixer4 mixerOut;
+    AudioEffectFreeverb reverb;
 
-    AudioConnection patchCord1;
-    AudioConnection patchCord2;
-    AudioConnection patchCord3;
-    AudioConnection patchCord4;
-    AudioConnection patchCord5;
-    AudioConnection patchCord6;
+    std::unique_ptr<AudioConnection> patchCordKST;
+    std::unique_ptr<AudioConnection> patchCordHCC;
+    std::unique_ptr<AudioConnection> patchCordReverb;
+    std::unique_ptr<AudioConnection> patchCordOutR;
+    std::unique_ptr<AudioConnection> patchCordOutL;
 
     uint32_t lastTriggerTime = 0; // Used to trigger drum sound periodically
 

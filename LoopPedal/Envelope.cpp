@@ -30,11 +30,12 @@ void Envelope::update(int deltaTime) {
         case Phase::DECAY:
         {
             unsigned long elapsedTime = micros() - decayStartTime;
-            float lerpFactor = elapsedTime / decayDuration;  // will be in range [0, 1]
-            lerpFactor = max(lerpFactor, 0.0f);
+            float lerpFactor = elapsedTime / decayDuration;
+            lerpFactor = constrain(lerpFactor, 0.0f, 1.0f);
 
             // Adjust the factor based on the desired curve
             float factor = pow(lerpFactor, curvedness);
+            factor += 0.5; // adjust for taste
             float decrementValue = decayDecrement * (deltaTime / 1e3) * factor;
 
             value -= decrementValue;
@@ -78,4 +79,9 @@ void Envelope::setDecayTime(float newDecayTime) {
 
 bool Envelope::isActive() const {
     return active;
+}
+
+void Envelope::setCurvedness(float curve)
+{
+    curvedness = curve;
 }

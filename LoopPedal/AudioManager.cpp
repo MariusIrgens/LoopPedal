@@ -1,16 +1,16 @@
 #include "AudioManager.h"
 AudioManager* AudioManager::instance = nullptr;
 
-AudioManager::AudioManager() :
-    patchCord1(drum, 0, mixer3, 3),
-    patchCord2(mixer1, 0, mixer3, 0),
-    patchCord3(mixer2, 0, mixer3, 1),
-    patchCord4(mixer3, 0, amplifier, 0),
-    patchCord5(amplifier, 0, audioOutput, 0), 
-    patchCord6(amplifier, 0, audioOutput, 1)
+AudioManager::AudioManager() 
 {
+    patchCordKST = std::make_unique<AudioConnection>(mixerKST, 0, mixerOut, 0);
+    patchCordHCC = std::make_unique<AudioConnection>(mixerHCC, 0, mixerOut, 1);
+    patchCordReverb = std::make_unique<AudioConnection>(mixerOut, 0, reverb, 0); // Needs mixing with clean signal
+    patchCordOutR = std::make_unique<AudioConnection>(mixerOut, 0, audioOutput, 0);
+    patchCordOutL = std::make_unique<AudioConnection>(mixerOut, 0, audioOutput, 1);
+
     instance = this;
-    sequencer = std::make_unique<Sequencer>(mixer1, mixer2);
+    sequencer = std::make_unique<Sequencer>(mixerKST, mixerHCC);
 }
 
 void AudioManager::setup()
@@ -19,20 +19,21 @@ void AudioManager::setup()
     sgtl5000.enable();
     sgtl5000.volume(0.2);
 
-    amplifier.gain(1.0);
+    mixerKST.gain(0, 1.0);
+    mixerKST.gain(1, 1.0);
+    mixerKST.gain(2, 1.0);
+    mixerKST.gain(3, 1.0);
+    mixerHCC.gain(0, 1.0);
+    mixerHCC.gain(1, 1.0);
+    mixerHCC.gain(2, 1.0);
+    mixerHCC.gain(3, 1.0);
+    mixerOut.gain(0, 1.0);
+    mixerOut.gain(1, 1.0);
+    mixerOut.gain(2, 1.0);
+    mixerOut.gain(3, 1.0);
 
-    mixer1.gain(0, 1.0); 
-    mixer1.gain(1, 1.0);
-    mixer1.gain(2, 1.0);
-    mixer1.gain(3, 1.0);
-    mixer2.gain(0, 1.0);
-    mixer2.gain(1, 1.0);
-    mixer2.gain(2, 1.0);
-    mixer2.gain(3, 1.0);
-    mixer3.gain(0, 1.0);
-    mixer3.gain(1, 1.0);
-    mixer3.gain(2, 1.0);
-    mixer3.gain(3, 1.0);
+    reverb.damping(0.0);
+    reverb.roomsize(0.01);
 
     drumTimer.begin(stepSequence, sixteenthNote); 
     updateTimer.begin(update, UPDATE_DELTATIME);
