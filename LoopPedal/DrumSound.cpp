@@ -13,3 +13,8 @@ void DrumSound::update(int resolution)
 {
 
 }
+
+void DrumSound::choke()
+{
+
+}

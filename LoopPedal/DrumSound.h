@@ -18,6 +18,7 @@ public:
     virtual ~DrumSound() = default;
     virtual void trigger(int velocity);
     virtual void update(int resolution);
+    virtual void choke();
 
 protected:
     bool debugMode = true;

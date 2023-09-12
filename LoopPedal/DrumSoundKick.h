@@ -8,12 +8,6 @@
 #endif
 
 #pragma once
-//#include <Audio.h>
-//#include <Wire.h>
-//#include <SPI.h>
-//#include <SD.h>
-//#include <SerialFlash.h>
-
 #include <memory>
 #include "DrumSound.h"
 #include "Envelope.h"
@@ -21,23 +15,26 @@
 class DrumSoundKick : public DrumSound {
 public:
 	DrumSoundKick(int mixerChannel, AudioMixer4& mixer);
-    void trigger(int velocity) override;  // Overriding the base class trigger method
+    void trigger(int velocity) override;
 	void update(int deltaTime) override;
 
 private:
+	// Modules
 	AudioSynthWaveformSine sineOsc;
 	AudioSynthWaveformSine clickOsc;
 	AudioSynthNoiseWhite noise;
 	AudioFilterStateVariable noiseFilter;
-	AudioMixer4 synthMixer;
+	AudioMixer4 oscMixer;
 
-	std::unique_ptr<AudioConnection> patchCordSineMix;
-	std::unique_ptr<AudioConnection> patchCordClickMix;
-	std::unique_ptr<AudioConnection> patchCordNoiseFilter;
-	std::unique_ptr<AudioConnection> patchCordFilterMix;
-	std::unique_ptr<AudioConnection> patchCordOut;
+	// Patching
+	std::unique_ptr<AudioConnection> patchCordSine_Mix;
+	std::unique_ptr<AudioConnection> patchCordClick_Mix;
+	std::unique_ptr<AudioConnection> patchCordNoise_Filter;
+	std::unique_ptr<AudioConnection> patchCordFilter_Mix;
+	std::unique_ptr<AudioConnection> patchCordMix_Out;
 
 	// Envelopes
+	bool envelopes_restarted = false;
 	std::unique_ptr<Envelope> envelopeSineAmplitude;
 	std::unique_ptr<Envelope> envelopeSineFrequency;
 	std::unique_ptr<Envelope> envelopeClickAmplitude;

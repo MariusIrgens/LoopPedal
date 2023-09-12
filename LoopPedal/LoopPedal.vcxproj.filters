@@ -51,6 +51,18 @@
     <ClCompile Include="Envelope.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DrumSoundTomHigh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DrumSoundTomLow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DrumSoundHihatClosed.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DrumSoundHihatOpen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="__vm\.LoopPedal.vsarduino.h">
@@ -84,6 +96,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Envelope.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DrumSoundTomHigh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DrumSoundTomLow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DrumSoundHihatClosed.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DrumSoundHihatOpen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

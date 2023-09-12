@@ -32,15 +32,18 @@ private:
     AudioAmplifier amplifier; // Amplifier for volume boost
     AudioOutputI2S audioOutput; // Stereo audio output
     AudioMixer4 mixerKST;
-    AudioMixer4 mixerHCC; 
+    AudioMixer4 mixerHCC;
+    AudioMixer4 mixerFX;
     AudioMixer4 mixerOut;
     AudioEffectFreeverb reverb;
 
-    std::unique_ptr<AudioConnection> patchCordKST;
-    std::unique_ptr<AudioConnection> patchCordHCC;
-    std::unique_ptr<AudioConnection> patchCordReverb;
-    std::unique_ptr<AudioConnection> patchCordOutR;
-    std::unique_ptr<AudioConnection> patchCordOutL;
+    std::unique_ptr<AudioConnection> patchCordKST_FX;
+    std::unique_ptr<AudioConnection> patchCordHCC_FX;
+    std::unique_ptr<AudioConnection> patchCordFX_Out;
+    std::unique_ptr<AudioConnection> patchCordFX_Reverb;
+    std::unique_ptr<AudioConnection> patchCordReverb_Out;
+    std::unique_ptr<AudioConnection> patchCordOut_AudioOutR;
+    std::unique_ptr<AudioConnection> patchCordOut_AudioOutL;
 
     uint32_t lastTriggerTime = 0; // Used to trigger drum sound periodically
 

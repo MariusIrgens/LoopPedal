@@ -13,6 +13,10 @@
 #include "DrumSound.h"
 #include "DrumSoundKick.h"
 #include "DrumSoundSnare.h"
+#include "DrumSoundTomHigh.h"
+#include "DrumSoundTomLow.h"
+#include "DrumSoundHihatClosed.h"
+#include "DrumSoundHihatOpen.h"
 
 class Sequencer {
 public:
@@ -24,11 +28,11 @@ public:
 
     std::unique_ptr<DrumSound> kick;
     std::unique_ptr<DrumSound> snare;
-    std::unique_ptr<DrumSound> clap;
-    std::unique_ptr<DrumSound> openHiHat;
-    std::unique_ptr<DrumSound> closedHiHat;
     std::unique_ptr<DrumSound> highTom;
     std::unique_ptr<DrumSound> lowTom;
+    std::unique_ptr<DrumSound> closedHiHat;
+    std::unique_ptr<DrumSound> openHiHat;
+    std::unique_ptr<DrumSound> clap;
     std::unique_ptr<DrumSound> cymbal;
 
 private:

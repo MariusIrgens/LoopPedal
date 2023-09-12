@@ -83,8 +83,12 @@
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="DisplayManager.cpp" />
     <ClCompile Include="DrumSound.cpp" />
+    <ClCompile Include="DrumSoundHihatClosed.cpp" />
+    <ClCompile Include="DrumSoundHihatOpen.cpp" />
     <ClCompile Include="DrumSoundKick.cpp" />
     <ClCompile Include="DrumSoundSnare.cpp" />
+    <ClCompile Include="DrumSoundTomHigh.cpp" />
+    <ClCompile Include="DrumSoundTomLow.cpp" />
     <ClCompile Include="Envelope.cpp" />
     <ClCompile Include="LoopPedal.ino">
       <FileType>CppCode</FileType>
@@ -106,8 +110,12 @@
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="DisplayManager.h" />
     <ClInclude Include="DrumSound.h" />
+    <ClInclude Include="DrumSoundHihatClosed.h" />
+    <ClInclude Include="DrumSoundHihatOpen.h" />
     <ClInclude Include="DrumSoundKick.h" />
     <ClInclude Include="DrumSoundSnare.h" />
+    <ClInclude Include="DrumSoundTomHigh.h" />
+    <ClInclude Include="DrumSoundTomLow.h" />
     <ClInclude Include="Envelope.h" />
     <ClInclude Include="Sequencer.h" />
     <ClInclude Include="Shape.h" />
