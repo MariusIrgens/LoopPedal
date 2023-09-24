@@ -12,8 +12,6 @@
 #include <vector>
 #include <string>
 
-// ... (previous code)
-
 class DrumTemplates {
 public:
     struct Template {
@@ -37,9 +35,7 @@ public:
 
 private:
     std::vector<Template> allTemplates; // This will store all the templates for the instance
+    // Could have one vector for each signature
 };
-
-// ... (remaining code)
-
 
 #endif

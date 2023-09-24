@@ -20,6 +20,7 @@ public:
     void loop();
     static void stepSequence();
     static void update();
+    void setDrumTimerInterval(int newSixteenthNote);
 
 private:
     static AudioManager* instance;

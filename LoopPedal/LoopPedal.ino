@@ -3,18 +3,18 @@
 
 #define FRAMERATE 30
 
-//DisplayManager displayManager;
+DisplayManager displayManager;
 AudioManager audioManager;
 
 void setup() {
     Serial.begin(9600);
 
-    //displayManager.setup();
+    displayManager.setup();
     audioManager.setup();
 }
 
 void loop() {
-    //displayManager.loop();
+    displayManager.loop();
     audioManager.loop();
     //delay(FRAMERATE); // Optional delay to reduce screen flickering
 }

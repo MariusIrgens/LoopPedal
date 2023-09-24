@@ -10,7 +10,7 @@ void DisplayManager::setup()
     tft.begin();
     tft.setRotation(2);
     tft.fillScreen(ILI9341_BLACK);
-    //drawMainMenu();
+    drawMainMenu();
 }
 
 void DisplayManager::loop()
@@ -18,10 +18,11 @@ void DisplayManager::loop()
     // this function will check for touch, and if touched, call a function that draws a complete menu based on the touch and the current menu.
     // It could also just call a function that makes some other selection (like bpm, options, etc).
     // It will also update all animated shapes.
+    // It will also call functionality in audioManager
 
 
-    //checkTouch();
-    updateDynamicShapes();
+    checkTouch();
+    //updateDynamicShapes();
 
 }
 
@@ -34,7 +35,7 @@ void DisplayManager::checkTouch()
 
     if (p.z > MINPRESSURE && p.z < MAXPRESSURE) 
     {
-
+        //Serial.println(p.z);
     }
 }
 

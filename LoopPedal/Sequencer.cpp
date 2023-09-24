@@ -1,6 +1,8 @@
 #include "Sequencer.h"
+#include "AudioManager.h"
 
-Sequencer::Sequencer(AudioMixer4& mixer1, AudioMixer4& mixer2)
+Sequencer::Sequencer(AudioManager* audioManager, AudioMixer4& mixer1, AudioMixer4& mixer2) 
+    : audioManagerRef(audioManager)
 {
     // Create sound objects
     kick = std::make_unique<DrumSoundKick>(0, mixer1);
@@ -18,8 +20,20 @@ Sequencer::Sequencer(AudioMixer4& mixer1, AudioMixer4& mixer2)
 }
 
 void Sequencer::newSequence() {
+
+    // Seed the random number generator
+    randomSeed(0);
+    float busyness1and3 = 0.5;
+    float busynessXtra2 = 0.3;
+    float busynessXtra4 = 0.4;
+    int templateIndex = 0;
+
+    // Set speed (for random speed at sequence change - call from touch instead)
+    //int newSixteenthNote = 125000;
+    //audioManagerRef->setDrumTimerInterval(newSixteenthNote);
+
     // Get template
-    templateToUse = drumTemplates->getTemplateByIndex(1);
+    templateToUse = drumTemplates->getTemplateByIndex(templateIndex);
     kickVariable = templateToUse.kickVariable;
     snareVariable = templateToUse.snareVariable;
     closedHiHatVariable = templateToUse.closedHihatVariable;
@@ -35,23 +49,20 @@ void Sequencer::newSequence() {
         std::fill(seq.begin(), seq.end(), 0);
     }
 
-    // Seed the random number generator
-    randomSeed(1);
-
     // CREATE SEQUENCE
     
     // Pattern 1 and 3 is normal
-    busyness = 0.4;
+    busyness = busyness1and3;
     addAlwaysHits();
     addVariableHits();
     pastePatternToSequence(0);
     pastePatternToSequence(templateToUse.patternLength * 2);
     // Pattern 2 adds hits
-    busyness = 0.3;
+    busyness = busynessXtra2;
     addVariableHits();
     pastePatternToSequence(templateToUse.patternLength);
     // Pattern 4 adds even more hits
-    busyness = 0.3;
+    busyness = busynessXtra4;
     addVariableHits();
     pastePatternToSequence(templateToUse.patternLength * 3);
 }

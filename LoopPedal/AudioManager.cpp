@@ -17,7 +17,7 @@ AudioManager::AudioManager()
     patchCordOut_AudioOutL = std::make_unique<AudioConnection>(mixerOut, 0, audioOutput, 1);
 
     instance = this;
-    sequencer = std::make_unique<Sequencer>(mixerKST, mixerHCC);
+    sequencer = std::make_unique<Sequencer>(this, mixerKST, mixerHCC);
 }
 
 void AudioManager::setup()
@@ -62,4 +62,10 @@ void AudioManager::stepSequence() {
 void AudioManager::update()
 {
     instance->sequencer->update(UPDATE_DELTATIME);
+}
+
+void AudioManager::setDrumTimerInterval(int newSixteenthNote) {
+    sixteenthNote = newSixteenthNote;
+    drumTimer.end();
+    drumTimer.begin(stepSequence, sixteenthNote);
 }

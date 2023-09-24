@@ -24,9 +24,11 @@
 
 enum class DrumType { Kick, Snare, LowTom, HighTom, ClosedHiHat, OpenHiHat, Cymbal };
 
+class AudioManager;
+
 class Sequencer {
 public:
-    Sequencer(AudioMixer4& mixer1, AudioMixer4& mixer2);
+    Sequencer(AudioManager* audioManager, AudioMixer4& mixer1, AudioMixer4& mixer2);
     void newSequence();
     void newDrums();
     void nextStep();
@@ -61,8 +63,10 @@ private:
     std::vector<std::vector<int>> patternSteps;
 
 
-    bool debugMode = true;
+    bool debugMode = false;
     int currentStep = 0;
+
+    AudioManager* audioManagerRef;
 };
 
 #endif
