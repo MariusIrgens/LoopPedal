@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distribution Generator</title>
+    <style>
+		* {
+			box-sizing: border-box;
+		}		
+		.drum-name {
+			white-space: nowrap; 
+			width: 100px; 
+			height: 20px;
+			background-color: #ffffff; /* light grey */
+		}
+		button {
+			width: 80px; 
+			height: 20px;
+			white-space: nowrap; 
+		}
+        td {
+            width: 20px;
+            height: 20px;
+            border: 1px solid black;
+            text-align: center;
+            cursor: pointer;
+			background-color: #e0e0e0; /* light grey */
+        }
+		td.major-beat {
+			background-color: #b0b0b0; /* darker grey */
+		}		
+		.dot {
+			width: 10px;
+			height: 10px;
+			border-radius: 50%; /* makes it round */
+			margin: auto; /* centers the dot in the cell */
+			display: block; /* ensures it centers properly */
+		}
+		.dot.always {
+			background-color: black;
+		}
+		.dot.common {
+			background-color: green;
+		}
+		.dot.occasional {
+			background-color: red;
+		}
+		.dot.rare {
+			background-color: blue;
+		}
+		
+		.drum-output {
+			border: 1px solid #ccc;
+			padding: 5px;
+			margin-bottom: 20px;
+			border-radius: 5px;
+			background-color: #f5f5f5;
+		}
+		.drum-output h3 {
+			margin-top: 0;
+			margin-bottom: 5px; 
+			font-size: 1.0em;
+			color: #333;
+		}
+		pre {
+			font-size: 1em;
+			margin: 5px 0;
+			padding: 5px;
+			border: 1px solid #e0e0e0;
+			background-color: #ffffff;
+		}
+		#insertionSettings input[type="number"] {
+			width: 30px;
+			height: 20px;
+			padding: 0px;
+			margin-right: 0px;
+		}
+
+    </style>
+</head>
+
+<body>
+<p>
+<div id="insertionSettings">
+<button onclick="savePatternToFile()">Save</button>
+<input type="file" id="patternFile" onchange="loadPatternFromFile()" style="display: none;">
+<button onclick="document.getElementById('patternFile').click()">Load</button>
+<span style="color: green;">C</span> <input type="number" id="nrCommonInserted" value="3" min="1">
+<span style="color: red;">O</span> <input type="number" id="nrOccasionalInserted" value="2" min="1">
+<span style="color: blue;">R</span> <input type="number" id="nrRareInserted" value="1" min="1">
+
+</div>
+</p>
+<button onclick="decreaseTimeSignature()">-</button>
+<span id="timeSignatureDisplay">4</span>
+<button onclick="increaseTimeSignature()">+</button>
+
+<table id="drumGrid">
+	<tr>
+		<td><button onclick="generateArray('openHihat')">Generate</button></td>
+		<td class="drum-name">Open Hihat</td>
+	</tr>
+	<tr>
+		<td><button onclick="generateArray('closedHihat')">Generate</button></td>
+		<td class="drum-name">Closed Hihat</td>
+	</tr>
+	<tr>
+		<td><button onclick="generateArray('snare')">Generate</button></td>
+		<td class="drum-name">Snare</td>
+	</tr>
+	<tr>
+		<td><button onclick="generateArray('kick')">Generate</button></td>
+		<td class="drum-name">Kick</td>
+	</tr>
+</table>
+
+<div class="drum-output">
+<pre id="outputNameOfBeat">.name = "newBeat",</pre> 
+<pre id="outputPatternLength">[]</pre> 
+<pre id="outputMaxPatternLength">[]</pre> 
+<pre id="outputOpenHihatAlways">[]</pre> 
+<pre id="outputOpenHihatVariable">[]</pre>
+<pre id="outputClosedHihatAlways">[]</pre> 
+<pre id="outputClosedHihatVariable">[]</pre>
+<pre id="outputSnareAlways">[]</pre> 
+<pre id="outputSnareVariable">[]</pre>
+<pre id="outputKickAlways">[]</pre> 
+<pre id="outputKickVariable">[]</pre>
+</div>
+
+
+<script>
+const drumGrid = document.getElementById('drumGrid');
+const numRows = drumGrid.rows.length; // Drum sounds
+const numCols = 16; // number of 16th steps
+
+function initializeGrid() {
+	const timeSignature = parseInt(document.getElementById('timeSignatureDisplay').textContent);
+	for (let i = 0; i < timeSignature; i++) {
+		addBeat();
+	}
+}
+
+function addBeat() {
+	for (let i = 0; i < numRows; i++) {
+		const currentCells = drumGrid.rows[i].cells.length;
+		for (let j = 0; j < 4; j++) {
+			const cell = drumGrid.rows[i].insertCell();
+			if (j === 0) { 
+				cell.classList.add('major-beat'); 
+			}
+			cell.addEventListener('click', () => toggleCell(cell));
+			cell.addEventListener('contextmenu', (e) => {
+				e.preventDefault();
+				const dot = cell.querySelector('.dot');
+				if (dot) cell.removeChild(dot);
+			});
+		}
+	}
+}
+
+function subtractBeat() {
+	for (let i = 0; i < numRows; i++) {
+		for (let j = 0; j < 4; j++) {
+			const lastCellIndex = drumGrid.rows[i].cells.length - 1;
+			drumGrid.rows[i].deleteCell(lastCellIndex);
+		}
+	}
+}
+
+function increaseTimeSignature() {
+	const display = document.getElementById('timeSignatureDisplay');
+	const currentSignature = parseInt(display.textContent);
+	display.textContent = currentSignature + 1;
+	addBeat();
+}
+
+function decreaseTimeSignature() {
+	const display = document.getElementById('timeSignatureDisplay');
+	const currentSignature = parseInt(display.textContent);
+	if (currentSignature > 1) {  // Assuming 1/4 is the minimum time signature you want to allow
+		display.textContent = currentSignature - 1;
+		subtractBeat();
+	}
+}
+
+function toggleCell(cell) {
+	let dot = cell.querySelector('.dot');
+	if (!dot) {
+		dot = document.createElement('div');
+		dot.classList.add('dot', 'always');
+		cell.appendChild(dot);
+	} else if (dot.classList.contains('always')) {
+		dot.classList.remove('always');
+		dot.classList.add('common');
+	} else if (dot.classList.contains('common')) {
+		dot.classList.remove('common');
+		dot.classList.add('occasional');
+	} else if (dot.classList.contains('occasional')) {
+		dot.classList.remove('occasional');
+		dot.classList.add('rare');
+	} else if (dot.classList.contains('rare')) {
+		cell.removeChild(dot);
+	}
+
+}
+
+function generateArray(drumType) {
+    let rowIndex;
+    let outputIdAlways;
+    let outputIdVariable;
+    const timeSignature = parseInt(document.getElementById('timeSignatureDisplay').textContent);
+    const totalSteps = timeSignature * 4;
+    
+    switch (drumType) {
+        case 'kick':
+            rowIndex = 3;
+            outputIdAlways = 'outputKickAlways';
+            outputIdVariable = 'outputKickVariable';
+            break;
+        case 'snare':
+            rowIndex = 2;
+            outputIdAlways = 'outputSnareAlways';
+            outputIdVariable = 'outputSnareVariable';
+            break;
+        case 'closedHihat':
+            rowIndex = 1;
+            outputIdAlways = 'outputClosedHihatAlways';
+            outputIdVariable = 'outputClosedHihatVariable';
+            break;
+        case 'openHihat':
+            rowIndex = 0;
+            outputIdAlways = 'outputOpenHihatAlways';
+            outputIdVariable = 'outputOpenHihatVariable';
+            break;
+        default:
+            return;
+    }
+
+    const outputAlways = document.getElementById(outputIdAlways);
+    const outputVariable = document.getElementById(outputIdVariable);
+    const nrCommonInserted = parseInt(document.getElementById('nrCommonInserted').value, 10);
+    const nrOccasionalInserted = parseInt(document.getElementById('nrOccasionalInserted').value, 10);
+    const nrRareInserted = parseInt(document.getElementById('nrRareInserted').value, 10);
+
+    let rowArrayAlways = [];
+    let rowArrayVariable = [];
+    
+    for (let j = 1; j <= totalSteps; j++) {
+        let dot = drumGrid.rows[rowIndex].cells[j+1].querySelector('.dot');
+        if (dot) {
+            switch (dot.className.split(' ')[1]) {
+                case 'always':
+                    rowArrayAlways.push(j);
+                    break;
+                case 'common':
+                    for (let k = 0; k < nrCommonInserted; k++)
+                        rowArrayVariable.push(j);
+                    break;
+                case 'occasional':
+                    for (let k = 0; k < nrOccasionalInserted; k++)
+                        rowArrayVariable.push(j);
+                    break;
+                case 'rare':
+                    for (let k = 0; k < nrRareInserted; k++)
+                        rowArrayVariable.push(j);
+                    break;
+            }
+        }
+    }
+
+    outputAlways.textContent = "." + drumType + "Always = {" + rowArrayAlways.join(',') + "},";
+    outputVariable.textContent = "." + drumType + "Variable = {" + rowArrayVariable.join(',') + "},";
+	patternLength = timeSignature * 4;
+	outputPatternLength.textContent = ".patternLength = " + patternLength + ",";
+	outputMaxPatternLength.textContent = ".maksPatternLength = " + patternLength * nrCommonInserted + ",";
+
+}
+
+
+function savePatternToFile() {
+    const patternData = {
+        timeSignature: parseInt(document.getElementById('timeSignatureDisplay').textContent),
+        drumPatterns: {}
+    };
+
+    ['openHihat', 'closedHihat', 'snare', 'kick'].forEach(drumType => {
+        patternData.drumPatterns[drumType] = [];
+
+        let rowIndex;
+        switch (drumType) {
+            case 'kick':
+                rowIndex = 3;
+                break;
+            case 'snare':
+                rowIndex = 2;
+                break;
+            case 'closedHihat':
+                rowIndex = 1;
+                break;
+            case 'openHihat':
+                rowIndex = 0;
+                break;
+        }
+
+        for (let j = 1; j <= patternData.timeSignature * 4; j++) {
+            let cell = drumGrid.rows[rowIndex].cells[j+1];
+            if (cell.querySelector('.dot')) {
+                patternData.drumPatterns[drumType].push(cell.querySelector('.dot').className.split(' ')[1]);
+            } else {
+                patternData.drumPatterns[drumType].push(null);
+            }
+        }
+    });
+
+    // Convert pattern data to JSON and then to a blob
+    const blob = new Blob([JSON.stringify(patternData)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    // Create a link to download the file and simulate a click
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = "pattern.json";
+    a.click();
+
+    // Clean up by revoking the object URL
+    URL.revokeObjectURL(url);
+}
+
+function loadPatternFromFile() {
+    const fileInput = document.getElementById('patternFile');
+    const file = fileInput.files[0];
+    
+    if (file) {
+        const reader = new FileReader();
+        
+        reader.onload = function(event) {
+            const patternData = JSON.parse(event.target.result);
+            
+            // Reset the grid
+            for (let i = 0; i < numRows; i++) {
+                while(drumGrid.rows[i].cells.length > 2) {
+                    drumGrid.rows[i].deleteCell(2);
+                }
+            }
+
+            // Set time signature
+            document.getElementById('timeSignatureDisplay').textContent = patternData.timeSignature;
+
+            // Create grid based on time signature
+            initializeGrid();
+
+            // Populate pattern
+            Object.keys(patternData.drumPatterns).forEach(drumType => {
+                let rowIndex;
+                switch (drumType) {
+                    case 'kick':
+                        rowIndex = 3;
+                        break;
+                    case 'snare':
+                        rowIndex = 2;
+                        break;
+                    case 'closedHihat':
+                        rowIndex = 1;
+                        break;
+                    case 'openHihat':
+                        rowIndex = 0;
+                        break;
+                }
+
+                for (let j = 1; j <= patternData.timeSignature * 4; j++) {
+                    if (patternData.drumPatterns[drumType][j-1]) {
+                        const cell = drumGrid.rows[rowIndex].cells[j+1];
+                        const dot = document.createElement('div');
+                        dot.className = 'dot ' + patternData.drumPatterns[drumType][j-1];
+                        cell.appendChild(dot);
+                    }
+                }
+            });
+        };
+        
+        reader.readAsText(file);
+    }
+}
+
+
+// Initialize the grid when the script loads
+initializeGrid();
+</script>
+</body>
+</html>

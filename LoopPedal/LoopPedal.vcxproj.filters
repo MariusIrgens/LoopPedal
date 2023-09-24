@@ -63,6 +63,9 @@
     <ClCompile Include="DrumSoundHihatOpen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DrumTemplates.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="__vm\.LoopPedal.vsarduino.h">
@@ -108,6 +111,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DrumSoundHihatOpen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DrumTemplates.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -89,6 +89,7 @@
     <ClCompile Include="DrumSoundSnare.cpp" />
     <ClCompile Include="DrumSoundTomHigh.cpp" />
     <ClCompile Include="DrumSoundTomLow.cpp" />
+    <ClCompile Include="DrumTemplates.cpp" />
     <ClCompile Include="Envelope.cpp" />
     <ClCompile Include="LoopPedal.ino">
       <FileType>CppCode</FileType>
@@ -116,6 +117,7 @@
     <ClInclude Include="DrumSoundSnare.h" />
     <ClInclude Include="DrumSoundTomHigh.h" />
     <ClInclude Include="DrumSoundTomLow.h" />
+    <ClInclude Include="DrumTemplates.h" />
     <ClInclude Include="Envelope.h" />
     <ClInclude Include="Sequencer.h" />
     <ClInclude Include="Shape.h" />

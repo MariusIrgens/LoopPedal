@@ -10,6 +10,9 @@
 #pragma once
 #include <vector>
 #include <memory>
+#include <algorithm> 
+#include <string>
+
 #include "DrumSound.h"
 #include "DrumSoundKick.h"
 #include "DrumSoundSnare.h"
@@ -17,6 +20,9 @@
 #include "DrumSoundTomLow.h"
 #include "DrumSoundHihatClosed.h"
 #include "DrumSoundHihatOpen.h"
+#include "DrumTemplates.h"
+
+enum class DrumType { Kick, Snare, LowTom, HighTom, ClosedHiHat, OpenHiHat, Cymbal };
 
 class Sequencer {
 public:
@@ -36,11 +42,35 @@ public:
     std::unique_ptr<DrumSound> cymbal;
 
 private:
-    static const int SEQUENCE_STEPS = 16; // Number of steps in a sequence
-    std::vector<std::vector<int>> sequenceSteps;  // 2D vector for sequences
-    bool debugMode = false;
+    bool oneMoreHit(int hitNumber, int contribution);
+    void pastePatternToSequence(int sequenceStart);
+    void addAlwaysHits();
+    void addVariableHits();
+    void populateVariableHits(std::vector<int>& drumSequence, DrumType drumType);
+
+    std::unique_ptr<DrumTemplates> drumTemplates;
+    DrumTemplates::Template templateToUse;
+    std::vector<int> kickVariable;
+    std::vector<int> snareVariable;
+    std::vector<int> closedHiHatVariable;
+    std::vector<int> openHiHatVariable;
+    float busyness = 0.5;
+
+    int sequenceLength;
+    std::vector<std::vector<int>> sequenceSteps;
+    std::vector<std::vector<int>> patternSteps;
+
+
+    bool debugMode = true;
     int currentStep = 0;
 };
 
 #endif
 
+// Example hard-coded sequence:
+//sequenceSteps[0] = { 1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 1, 0,  0, 0, 0, 0 };  // kick
+//sequenceSteps[1] = { 0, 0, 0, 0,  1, 0, 0, 0,  0, 0, 0, 0,  1, 0, 0, 0 }; // snare
+//sequenceSteps[2] = { 0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0 }; // high tom
+//sequenceSteps[3] = { 0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0 }; // low tom
+//sequenceSteps[4] = { 1, 0, 0, 0,  1, 0, 0, 0,  1, 0, 0, 0,  1, 0, 0, 0 }; // closed hihat
+//sequenceSteps[5] = { 0, 0, 1, 0,  0, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 0 }; // open hihat
