@@ -40,6 +40,7 @@ void Sequencer::newSequence() {
     openHiHatVariable = templateToUse.openHihatVariable;
 
     // Get pattern length and set sequence length
+    patternLength = templateToUse.patternLength;
     patternSteps.resize(8, std::vector<int>(templateToUse.patternLength, 0));
     sequenceLength = templateToUse.patternLength * 4;
     sequenceSteps.resize(8, std::vector<int>(sequenceLength, 0));
@@ -203,4 +204,14 @@ void Sequencer::update(int deltaTime)
     lowTom->update(deltaTime);
     closedHiHat->update(deltaTime);
     openHiHat->update(deltaTime);
+}
+
+int Sequencer::readCurrentStep()
+{
+    return currentStep;
+}
+
+int Sequencer::getPatternLength()
+{
+    return patternLength;
 }

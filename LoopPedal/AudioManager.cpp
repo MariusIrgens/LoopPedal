@@ -1,7 +1,9 @@
 #include "AudioManager.h"
+#include "SystemController.h"
+
 AudioManager* AudioManager::instance = nullptr;
 
-AudioManager::AudioManager() 
+AudioManager::AudioManager(SystemController* sysController) : systemController(sysController)
 {
     // To FX mixer
     patchCordKST_FX = std::make_unique<AudioConnection>(mixerKST, 0, mixerFX, 0);
@@ -52,11 +54,31 @@ void AudioManager::setup()
 
 void AudioManager::loop()
 {
-
+    // Can do non-exact stuff?
 }
 
 void AudioManager::stepSequence() {
+
+    // Run sequencer
     instance->sequencer->nextStep();
+
+    // Metronome
+    if (instance->sequencer->readCurrentStep() == 0) // Sequence start
+    {
+        instance->systemController->blinkLED(1);
+    }
+    else if (instance->sequencer->readCurrentStep() % instance->sequencer->getPatternLength() == 0) // Major beats
+    {
+        instance->systemController->blinkLED(2);
+    }
+    else if (instance->sequencer->readCurrentStep() % 4 == 0) // Others
+    {
+        instance->systemController->blinkLED(3);
+    }
+    else
+    {
+        instance->systemController->blinkLED(0); // Turn off
+    }
 }
 
 void AudioManager::update()

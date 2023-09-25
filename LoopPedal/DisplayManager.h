@@ -7,7 +7,7 @@
 	#include "WProgram.h"
 #endif
 
-#include <TouchScreen.h>
+//#include <TouchScreen.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_ILI9341.h>
 #include <vector>
@@ -21,15 +21,15 @@
 
 #define TFT_DC 9
 #define TFT_CS 10
-#define YP A2  // Y+ 
-#define XM A3  // X-
-#define YM 3   // Y-
-#define XP 2   // X+
+//#define YP A2  // Y+ 
+//#define XM A3  // X-
+//#define YM 3   // Y-
+//#define XP 2   // X+
 
 // TOUCH PRESSURE
 
-#define MINPRESSURE 10
-#define MAXPRESSURE 1000
+//#define MINPRESSURE 10
+//#define MAXPRESSURE 1000
 
 // SCREENSIZE
 #define SCREEN_WIDTH 240
@@ -44,7 +44,7 @@ public:
     DisplayManager();
     void setup();
     void loop();
-    void checkTouch();
+    //void checkTouch();
     void drawMainMenu();
     void drawStaticShapes();
     void updateDynamicShapes();
@@ -57,7 +57,7 @@ public:
 
 private:
     Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
-    TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
+    //TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 
     std::vector<std::unique_ptr<Shape>> staticShapes;
     std::vector<std::unique_ptr<Shape>> dynamicShapes;

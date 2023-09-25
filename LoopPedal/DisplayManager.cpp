@@ -8,7 +8,7 @@ DisplayManager::DisplayManager()
 void DisplayManager::setup()
 {
     tft.begin();
-    tft.setRotation(2);
+    tft.setRotation(2); // rotate screen
     tft.fillScreen(ILI9341_BLACK);
     drawMainMenu();
 }
@@ -21,33 +21,34 @@ void DisplayManager::loop()
     // It will also call functionality in audioManager
 
 
-    checkTouch();
+    //checkTouch();
     //updateDynamicShapes();
+    //drawMainMenu();
+
 
 }
 
-void DisplayManager::checkTouch()
-{
-    // Check for touch
-    TSPoint p = ts.getPoint();
-    pinMode(XM, OUTPUT);
-    pinMode(YP, OUTPUT);
-
-    if (p.z > MINPRESSURE && p.z < MAXPRESSURE) 
-    {
-        //Serial.println(p.z);
-    }
-}
+//void DisplayManager::checkTouch()
+//{
+//    // Check for touch
+//    TSPoint p = ts.getPoint();
+//    pinMode(XM, OUTPUT);
+//    pinMode(YP, OUTPUT);
+//
+//    if (p.z > MINPRESSURE && p.z < MAXPRESSURE) 
+//    {
+//        //Serial.println(p.z);
+//    }
+//}
 
 void DisplayManager::drawMainMenu()
 {
     tft.fillScreen(ILI9341_BLACK);
-
-    //addStaticShape<ShapeRectangle>(10, 10, 50, 50);
-    //addStaticShape<ShapeRectangle>(SCREEN_WIDTH - 60, 10, 50, 50);
-    //addStaticShape<ShapeRectangle>(10, SCREEN_HEIGHT - 60, 50, 50);
-    //addStaticShape<ShapeRectangle>(SCREEN_WIDTH - 60, SCREEN_HEIGHT - 60, 50, 50);
-    addDynamicShape<ShapeClock>(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 100);
+    addStaticShape<ShapeRectangle>(10, 10, 50, 50);
+    addStaticShape<ShapeRectangle>(SCREEN_WIDTH - 60, 10, 50, 50);
+    addStaticShape<ShapeRectangle>(10, SCREEN_HEIGHT - 60, 50, 50);
+    addStaticShape<ShapeRectangle>(SCREEN_WIDTH - 60, SCREEN_HEIGHT - 60, 50, 50);
+    //addDynamicShape<ShapeClock>(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 100);
     drawStaticShapes();
 }
 
@@ -61,7 +62,6 @@ template <typename T, typename... Args>
 void DisplayManager::addDynamicShape(Args&&... args) {
     dynamicShapes.push_back(std::make_unique<T>(tft, std::forward<Args>(args)...));
 }
-
 
 void DisplayManager::drawStaticShapes() 
 {

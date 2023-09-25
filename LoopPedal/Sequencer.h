@@ -33,6 +33,8 @@ public:
     void newDrums();
     void nextStep();
     void update(int deltaTime);
+    int readCurrentStep();
+    int getPatternLength();
 
     std::unique_ptr<DrumSound> kick;
     std::unique_ptr<DrumSound> snare;
@@ -59,12 +61,14 @@ private:
     float busyness = 0.5;
 
     int sequenceLength;
+    int patternLength;
     std::vector<std::vector<int>> sequenceSteps;
     std::vector<std::vector<int>> patternSteps;
 
 
     bool debugMode = false;
     int currentStep = 0;
+    int timeSign = 4;
 
     AudioManager* audioManagerRef;
 };

@@ -1,20 +1,12 @@
-#include "DisplayManager.h"
-#include "AudioManager.h"
+#include "SystemController.h"
 
-#define FRAMERATE 30
-
-DisplayManager displayManager;
-AudioManager audioManager;
+SystemController systemController;
 
 void setup() {
-    Serial.begin(9600);
-
-    displayManager.setup();
-    audioManager.setup();
+    systemController.setup();
 }
 
 void loop() {
-    displayManager.loop();
-    audioManager.loop();
-    //delay(FRAMERATE); // Optional delay to reduce screen flickering
+
+    systemController.loop();
 }

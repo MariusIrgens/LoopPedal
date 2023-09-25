@@ -13,9 +13,11 @@
 
 #define UPDATE_DELTATIME 25000 // How often update is run, resulting in its resolution
 
+class SystemController;
+
 class AudioManager {
 public:
-    AudioManager();
+    AudioManager(SystemController* sysController);
     void setup();
     void loop();
     static void stepSequence();
@@ -23,6 +25,7 @@ public:
     void setDrumTimerInterval(int newSixteenthNote);
 
 private:
+    SystemController* systemController;
     static AudioManager* instance;
     std::unique_ptr<Sequencer> sequencer;
     IntervalTimer drumTimer;
