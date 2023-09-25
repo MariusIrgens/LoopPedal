@@ -14,11 +14,13 @@
 #include "InteractionManager.h"
 
 #define FRAMERATE 30
+#define LEDSTRENGTH 10
 
 class SystemController {
 public:
 	SystemController();
 	void newSequence();
+	void newDrums();
 	void recordLoop();
 	void blinkLED(int state);
 	void setup();

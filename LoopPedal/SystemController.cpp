@@ -31,6 +31,11 @@ void SystemController::newSequence()
 	Serial.println("New sequence!");
 }
 
+void SystemController::newDrums()
+{
+	Serial.println("New drums!");
+}
+
 void SystemController::recordLoop()
 {
 	Serial.println("Record loop!");
@@ -45,15 +50,15 @@ void SystemController::blinkLED(int state)
 		break;
 	case 1:
 		//Serial.println("Blink seq start!");
-		interactionManager->blinkLED(50, 0, 0);
+		interactionManager->blinkLED(LEDSTRENGTH, 0, 0);
 		break;
 	case 2:
 		//Serial.println("Blink major beat!");
-		interactionManager->blinkLED(0, 50, 0);
+		interactionManager->blinkLED(0, LEDSTRENGTH, 0);
 		break;
 	case 3:
 		//Serial.println("Blink others!");
-		interactionManager->blinkLED(0, 0, 50);
+		interactionManager->blinkLED(0, 0, LEDSTRENGTH);
 		break;
 	default:
 		break;

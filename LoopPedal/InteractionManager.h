@@ -19,11 +19,13 @@ public:
     void loop();  
     void onButton1Pressed(); 
     void onButton2Pressed(); 
+    void onButton3Pressed();
     int readPotentiometer();
     void blinkLED(int r, int g, int b);
 
     static void button1ISR(); // ISR for button 1
     static void button2ISR(); // ISR for button 2
+    static void button3ISR(); // ISR for button 2
 
 private:
     SystemController* systemController; // Pointer to creator
@@ -31,8 +33,10 @@ private:
     // Buttons
     static const int buttonPin1 = 14;
     static const int buttonPin2 = 16;
+    static const int buttonPin3 = 17;
     static volatile unsigned long lastInterruptTime1;
     static volatile unsigned long lastInterruptTime2;
+    static volatile unsigned long lastInterruptTime3;
 
     // Pot
     static const int potPin = A1;

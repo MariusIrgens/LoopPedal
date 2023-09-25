@@ -4,6 +4,7 @@
 // Define static members
 volatile unsigned long InteractionManager::lastInterruptTime1 = 0;
 volatile unsigned long InteractionManager::lastInterruptTime2 = 0;
+volatile unsigned long InteractionManager::lastInterruptTime3 = 0;
 InteractionManager* InteractionManager::instance = nullptr; 
 
 InteractionManager::InteractionManager(SystemController* systemContr) 
@@ -17,8 +18,11 @@ void InteractionManager::setup() {
     // Buttons
     pinMode(buttonPin1, INPUT_PULLUP);
     pinMode(buttonPin2, INPUT_PULLUP);
+    pinMode(buttonPin3, INPUT_PULLUP);
     attachInterrupt(digitalPinToInterrupt(buttonPin1), InteractionManager::button1ISR, FALLING);
     attachInterrupt(digitalPinToInterrupt(buttonPin2), InteractionManager::button2ISR, FALLING);
+    attachInterrupt(digitalPinToInterrupt(buttonPin3), InteractionManager::button3ISR, FALLING);
+
     // Potentiometer
     pinMode(potPin, INPUT);
     // LED
@@ -50,11 +54,25 @@ void InteractionManager::button2ISR() {
     }
 }
 
+void InteractionManager::button3ISR() {
+    unsigned long currentInterruptTime = millis();
+    // Debounce
+    if (currentInterruptTime - lastInterruptTime3 > 50) {
+        instance->onButton3Pressed();
+        lastInterruptTime3 = currentInterruptTime;
+    }
+}
+
 void InteractionManager::onButton1Pressed() {
     systemController->newSequence();
 }
 
 void InteractionManager::onButton2Pressed() {
+    systemController->newDrums();
+}
+
+void InteractionManager::onButton3Pressed() {
+    //systemController->recordLoop();
     systemController->recordLoop();
 }
 
