@@ -4,7 +4,6 @@ SystemController::SystemController()
 {
 	audioManager = std::make_unique<AudioManager>(this);
 	interactionManager = std::make_unique<InteractionManager>(this);
-
 }
 
 void SystemController::setup()
@@ -16,29 +15,35 @@ void SystemController::setup()
 
 void SystemController::loop()
 {
-	audioManager->loop();
-	interactionManager->loop();
+	// Only for non-timer critical functions
 
-	// interactionManager->readPotentiometer() reads the pot
-	//std::string message = "pot: " + std::to_string(interactionManager->readPotentiometer());
-	//Serial.println(message.c_str());
+	// Read pots and update volume if moved
+	setAudioVolume();
+	setDrumVolume();
+	delay(500);
+}
 
-	delay(100);
+void SystemController::setAudioVolume()
+{
+	float volume = float(interactionManager->readPotentiometer(1)) / 1023.0f;
+	audioManager->setAudioVolume(volume);
+}
+
+void SystemController::setDrumVolume()
+{
+	float volume = float(interactionManager->readPotentiometer(2)) / 1023.0f;
+	audioManager->setDrumVolume(volume);
 }
 
 void SystemController::newSequence()
 {
 	Serial.println("New sequence!");
-}
-
-void SystemController::newDrums()
-{
-	Serial.println("New drums!");
+	audioManager->getLooper()->reset();
 }
 
 void SystemController::recordLoop()
 {
-	Serial.println("Record loop!");
+	audioManager->getLooper()->record();
 }
 
 void SystemController::blinkLED(int state)

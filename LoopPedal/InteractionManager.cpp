@@ -4,7 +4,6 @@
 // Define static members
 volatile unsigned long InteractionManager::lastInterruptTime1 = 0;
 volatile unsigned long InteractionManager::lastInterruptTime2 = 0;
-volatile unsigned long InteractionManager::lastInterruptTime3 = 0;
 InteractionManager* InteractionManager::instance = nullptr; 
 
 InteractionManager::InteractionManager(SystemController* systemContr) 
@@ -18,13 +17,13 @@ void InteractionManager::setup() {
     // Buttons
     pinMode(buttonPin1, INPUT_PULLUP);
     pinMode(buttonPin2, INPUT_PULLUP);
-    pinMode(buttonPin3, INPUT_PULLUP);
     attachInterrupt(digitalPinToInterrupt(buttonPin1), InteractionManager::button1ISR, FALLING);
     attachInterrupt(digitalPinToInterrupt(buttonPin2), InteractionManager::button2ISR, FALLING);
-    attachInterrupt(digitalPinToInterrupt(buttonPin3), InteractionManager::button3ISR, FALLING);
 
-    // Potentiometer
-    pinMode(potPin, INPUT);
+    // Potentiometers
+    pinMode(potPin1, INPUT);
+    pinMode(potPin2, INPUT);
+
     // LED
     pinMode(LEDR_Pin, OUTPUT);
     pinMode(LEDG_Pin, OUTPUT);
@@ -32,14 +31,10 @@ void InteractionManager::setup() {
 
 }
 
-void InteractionManager::loop() {
-
-}
-
 void InteractionManager::button1ISR() {
     unsigned long currentInterruptTime = millis();
     // Debounce
-    if (currentInterruptTime - lastInterruptTime1 > 50) {
+    if (currentInterruptTime - lastInterruptTime1 > 200) {
         instance->onButton1Pressed();
         lastInterruptTime1 = currentInterruptTime;
     }
@@ -48,18 +43,9 @@ void InteractionManager::button1ISR() {
 void InteractionManager::button2ISR() {
     unsigned long currentInterruptTime = millis();
     // Debounce
-    if (currentInterruptTime - lastInterruptTime2 > 50) {
+    if (currentInterruptTime - lastInterruptTime2 > 200) {
         instance->onButton2Pressed();
         lastInterruptTime2 = currentInterruptTime;
-    }
-}
-
-void InteractionManager::button3ISR() {
-    unsigned long currentInterruptTime = millis();
-    // Debounce
-    if (currentInterruptTime - lastInterruptTime3 > 50) {
-        instance->onButton3Pressed();
-        lastInterruptTime3 = currentInterruptTime;
     }
 }
 
@@ -68,16 +54,22 @@ void InteractionManager::onButton1Pressed() {
 }
 
 void InteractionManager::onButton2Pressed() {
-    systemController->newDrums();
-}
-
-void InteractionManager::onButton3Pressed() {
-    //systemController->recordLoop();
     systemController->recordLoop();
 }
 
-int InteractionManager::readPotentiometer() {
-    return analogRead(potPin);
+int InteractionManager::readPotentiometer(int potNumber) {
+    switch (potNumber)
+    {
+    case 1:
+        return analogRead(potPin1);
+        break;
+    case 2:
+        return analogRead(potPin2);
+        break;
+    default:
+        return 0;
+        break;
+    }
 }
 
 void InteractionManager::blinkLED(int r, int g, int b) {

@@ -16,34 +16,31 @@ public:
     static InteractionManager* instance;  // Static pointer for the singleton instance
     InteractionManager(SystemController* systemContr);
     void setup();
-    void loop();  
     void onButton1Pressed(); 
     void onButton2Pressed(); 
-    void onButton3Pressed();
-    int readPotentiometer();
+    int readPotentiometer(int potNumber);
     void blinkLED(int r, int g, int b);
 
     static void button1ISR(); // ISR for button 1
     static void button2ISR(); // ISR for button 2
-    static void button3ISR(); // ISR for button 2
 
 private:
     SystemController* systemController; // Pointer to creator
 
     // Buttons
     static const int buttonPin1 = 14;
-    static const int buttonPin2 = 16;
-    static const int buttonPin3 = 17;
+    static const int buttonPin2 = 17;
     static volatile unsigned long lastInterruptTime1;
     static volatile unsigned long lastInterruptTime2;
-    static volatile unsigned long lastInterruptTime3;
 
     // Pot
-    static const int potPin = A1;
-    int potValue = 0;
+    static const int potPin1 = A1;
+    static const int potPin2 = A2;
+    int pot1Value = 0;
+    int pot2Value = 0;
 
     // LED
-    const int LEDR_Pin = 5;
+    const int LEDR_Pin = 6;
     const int LEDG_Pin = 3;
     const int LEDB_Pin = 4;
 };

@@ -19,8 +19,9 @@
 class SystemController {
 public:
 	SystemController();
+	void setAudioVolume();
+	void setDrumVolume();
 	void newSequence();
-	void newDrums();
 	void recordLoop();
 	void blinkLED(int state);
 	void setup();
