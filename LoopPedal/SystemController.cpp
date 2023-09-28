@@ -9,6 +9,7 @@ SystemController::SystemController()
 void SystemController::setup()
 {
 	Serial.begin(9600); // Used for debug. Remove when done.
+	audioManager->getLooper()->setup();
 	audioManager->setup();
 	interactionManager->setup();
 }

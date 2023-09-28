@@ -29,6 +29,11 @@ void InteractionManager::setup() {
     pinMode(LEDG_Pin, OUTPUT);
     pinMode(LEDB_Pin, OUTPUT);
 
+    // TEST
+    //pinMode(test_Pin, OUTPUT);
+    //analogWrite(test_Pin, 255);
+
+
 }
 
 void InteractionManager::button1ISR() {

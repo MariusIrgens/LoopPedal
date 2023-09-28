@@ -21,19 +21,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LoopPedal.ino" />
-    <ClCompile Include="DisplayManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="AudioManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Shape.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ShapeRectangle.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ShapeClock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Sequencer.cpp">
@@ -69,9 +57,6 @@
     <ClCompile Include="SystemController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TouchManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="InteractionManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -83,19 +68,7 @@
     <ClInclude Include="__vm\.LoopPedal.vsarduino.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DisplayManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="AudioManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Shape.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ShapeRectangle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ShapeClock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sequencer.h">
@@ -129,9 +102,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SystemController.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TouchManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="InteractionManager.h">

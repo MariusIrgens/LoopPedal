@@ -10,15 +10,22 @@ Looper::Looper(AudioManager* audioManager, AudioMixer4& mixerAudio, AudioMixer4&
     // FROM loop-player TO loop-mixer (wet)
     patchCordLoopPlay_LoopMix = std::make_unique<AudioConnection>(player, 0, mixerLooper, 1);
 
+}
+
+void Looper::setup()
+{
+    pinMode(CS, OUTPUT);
+
     // Initialize the SD card
-    //SPI.setMOSI(11);
-    //SPI.setSCK(13);
-    //SD.begin(10);
-    //if (!(SD.begin(10))) {
-    //    // stop here if no SD card, but print a message
-    //    Serial.println("Unable to access the SD card");
-    //    delay(500);
-    //}
+    SPI.setMOSI(11);
+    SPI.setMISO(12);
+    SPI.setSCK(13);
+    //SD.begin(CS);
+
+    if (!(SD.begin(CS))) 
+    {
+        Serial.println("Unable to access the SD card");
+    }
 }
 
 void Looper::record() {

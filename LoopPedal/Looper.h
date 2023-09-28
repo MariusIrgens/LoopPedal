@@ -9,13 +9,14 @@
 	#include "WProgram.h"
 #endif
 #include <Audio.h>
-
-#include <Audio.h>
 #include <memory>
 #include <vector>
 
 //#define AUDIO_BLOCK_SAMPLES 128
 // Use these with the Teensy Audio Shield
+
+#define SPI_SPEED SD_SCK_MHZ(4)
+#define CS 10
 
 
 class AudioManager;
@@ -30,6 +31,7 @@ public:
     };
 
     Looper(AudioManager* audioManager, AudioMixer4& mixerAudio, AudioMixer4& mixerLooper);
+    void setup();
 
     // Start or stop recording
     void record();

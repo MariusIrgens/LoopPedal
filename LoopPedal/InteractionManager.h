@@ -43,6 +43,10 @@ private:
     const int LEDR_Pin = 6;
     const int LEDG_Pin = 3;
     const int LEDB_Pin = 4;
+
+    // TEST
+    //const int test_Pin = 13;
+
 };
 
 #endif
