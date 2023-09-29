@@ -16,12 +16,10 @@ void SystemController::setup()
 
 void SystemController::loop()
 {
-	// Only for non-timer critical functions
-
 	// Read pots and update volume if moved
 	setAudioVolume();
 	setDrumVolume();
-	delay(500);
+	audioManager->looperLoop();
 }
 
 void SystemController::setAudioVolume()
@@ -38,13 +36,12 @@ void SystemController::setDrumVolume()
 
 void SystemController::newSequence()
 {
-	Serial.println("New sequence!");
-	audioManager->getLooper()->reset();
+	audioManager->newSequence();
 }
 
-void SystemController::recordLoop()
+void SystemController::record()
 {
-	audioManager->getLooper()->record();
+	audioManager->getLooper()->recordButton();
 }
 
 void SystemController::blinkLED(int state)

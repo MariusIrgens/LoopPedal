@@ -42,7 +42,7 @@ AudioManager::AudioManager(SystemController* sysController) : systemController(s
 void AudioManager::setup()
 {
     // Codec
-    AudioMemory(1500);
+    AudioMemory(60);
     sgtl5000.enable();
     sgtl5000.volume(1.0);
 
@@ -67,7 +67,7 @@ void AudioManager::setup()
 
     // End-mixer
     mixerEnd.gain(0, 0.2); // Drums (dry)
-    mixerEnd.gain(1, 0.0); // Drums reverb (wet)
+    mixerEnd.gain(1, 0.04); // Drums reverb (wet)
     mixerEnd.gain(2, 1.0); // Audio thru
     mixerEnd.gain(3, 1.0); // Audio Loop
 
@@ -76,9 +76,8 @@ void AudioManager::setup()
     reverb.roomsize(0.01);
 
     // Timers
-    drumTimer.begin(stepUpdate, sixteenthNote);
-    updateTimer.begin(synthUpdate, UPDATE_DELTATIME);
-    looperTimer.begin(looperUpdate, LOOPER_DELTATIME);
+    //drumTimer.begin(stepUpdate, sixteenthNote);
+    //updateTimer.begin(synthUpdate, SYNTH_DELTATIME);
 }
 
 void AudioManager::stepUpdate() {
@@ -107,12 +106,12 @@ void AudioManager::stepUpdate() {
 
 void AudioManager::synthUpdate()
 {
-    instance->sequencer->update(UPDATE_DELTATIME);
+    instance->sequencer->update(SYNTH_DELTATIME);
 }
 
-void AudioManager::looperUpdate() 
+void AudioManager::looperLoop()
 {
-    instance->looper->update();
+    instance->looper->loop();
 }
 
 void AudioManager::setDrumTimerInterval(int newSixteenthNote) {
@@ -150,4 +149,43 @@ void AudioManager::setDrumVolume(float volume)
 Looper* AudioManager::getLooper()
 {
     return looper.get();
+}
+
+Sequencer* AudioManager::getSequencer()
+{
+    return sequencer.get();
+}
+
+void AudioManager::newSequence()
+{
+    //Serial.println("New sequence!");
+
+    //// Seed the random number generator
+    //uint32_t seedForRandomSeed = millis();
+    //randomSeed(seedForRandomSeed);
+
+    // Remove recorded loop
+    looper->stopButton();
+
+    //// Generate new sequence
+    //sequencer->newSequence();
+
+    //// Generate new drums
+    //sequencer->newDrums();
+
+    //// Set new tempo
+    //int newBPM = random(70, 140);
+    //setDrumTimerInterval(generateSixteenthFromBPM(newBPM));
+
+}
+
+uint32_t AudioManager::generateSixteenthFromBPM(int bpm) 
+{
+    // Duration of a quarter note in microseconds
+    float quarterNoteDurationMicroseconds = 60000000.0f / bpm; 
+
+    // Duration of a sixteenth note in microseconds
+    uint32_t sixteenthNoteDurationMicroseconds = static_cast<uint32_t>(quarterNoteDurationMicroseconds / 4.0f); 
+
+    return sixteenthNoteDurationMicroseconds;
 }

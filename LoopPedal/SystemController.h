@@ -22,7 +22,7 @@ public:
 	void setAudioVolume();
 	void setDrumVolume();
 	void newSequence();
-	void recordLoop();
+	void record();
 	void blinkLED(int state);
 	void setup();
 	void loop();

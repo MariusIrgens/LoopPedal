@@ -13,8 +13,7 @@ DrumSoundHihatClosed::DrumSoundHihatClosed(int mixerChannel, AudioMixer4& mixer)
     oscMixer.gain(2, 0.0f);
     oscMixer.gain(3, 0.0f);
 
-    envelopeNoiseAmplitude = std::make_unique<Envelope>(maxAmplitudeNoise, minAmplitudeNoise, attackTimeAmplitudeNoise, decayTimeAmplitudeNoise, curvednessAmplitudeNoise);
-    envelopeNoiseFilterFreq = std::make_unique<Envelope>(maxFilterFreqNoise, minFilterFreqNoise, attackTimeFilterFreqNoise, decayTimeFilterFreqNoise, curvednessFilterFreqNoise);
+    newDrum();
 
 }
 
@@ -38,5 +37,35 @@ void DrumSoundHihatClosed::update(int deltaTime)
         envelopeNoiseFilterFreq->update(deltaTime);
         noiseFilter.frequency(envelopeNoiseFilterFreq->read());
     }
+}
+
+void DrumSoundHihatClosed::choke()
+{
+    noise.amplitude(0.0f);
+    noiseFilter.frequency(0.0f);
+    envelopes_restarted = false;
+}
+
+void DrumSoundHihatClosed::newDrum()
+{
+    choke();
+
+    // Settings
+    
+    // Noise 
+    maxAmplitudeNoise = randomFloat(0.3f, 0.5f);
+    minAmplitudeNoise = 0.0f;
+    attackTimeAmplitudeNoise = randomFloat(0.5f, 1.0f) * 10.0f;
+    decayTimeAmplitudeNoise = randomFloat(0.5f, 1.0f) * 100.0f;
+    curvednessAmplitudeNoise = randomFloat(0.1f, 0.5f);
+
+    maxFilterFreqNoise = randomFloat(0.5f, 1.0f) * 12000.0;
+    minFilterFreqNoise = randomFloat(0.5f, 1.0f) * 5000.0f;
+    attackTimeFilterFreqNoise = randomFloat(0.5f, 1.0f) * 10.0f;
+    decayTimeFilterFreqNoise = randomFloat(0.5f, 1.0f) * 500.0f;
+    curvednessFilterFreqNoise = randomFloat(0.1f, 0.5f);
+
+    envelopeNoiseAmplitude = std::make_unique<Envelope>(maxAmplitudeNoise, minAmplitudeNoise, attackTimeAmplitudeNoise, decayTimeAmplitudeNoise, curvednessAmplitudeNoise);
+    envelopeNoiseFilterFreq = std::make_unique<Envelope>(maxFilterFreqNoise, minFilterFreqNoise, attackTimeFilterFreqNoise, decayTimeFilterFreqNoise, curvednessFilterFreqNoise);
 
 }

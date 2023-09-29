@@ -12,8 +12,8 @@
 #include "Sequencer.h"
 #include "Looper.h"
 
-#define UPDATE_DELTATIME 25000 // How often update is run, resulting in its resolution (used for envelopes)
-#define LOOPER_DELTATIME 20000
+#define SYNTH_DELTATIME 25000 // Used to update synth parameters with envelopes
+//#define LOOPER_DELTATIME 3000
 
 class SystemController;
 
@@ -23,11 +23,14 @@ public:
     void setup();
     static void stepUpdate();
     static void synthUpdate();
-    static void looperUpdate();
+    static void looperLoop();
     void setDrumTimerInterval(int newSixteenthNote);
     void setAudioVolume(float volume);
     void setDrumVolume(float volume);
     Looper* getLooper();
+    Sequencer* getSequencer();
+    void newSequence();
+    uint32_t generateSixteenthFromBPM(int BPM);
 
 private:
     SystemController* systemController;
@@ -67,7 +70,7 @@ private:
 
     uint32_t lastTriggerTime = 0; // Used to trigger drum sound periodically
 
-    int sixteenthNote = 125000;
+    uint32_t sixteenthNote = 125000;
 
     float drumVolume = 0.0f;
     float audioVolume = 0.0f;

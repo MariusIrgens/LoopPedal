@@ -59,7 +59,7 @@ void InteractionManager::onButton1Pressed() {
 }
 
 void InteractionManager::onButton2Pressed() {
-    systemController->recordLoop();
+    systemController->record();
 }
 
 int InteractionManager::readPotentiometer(int potNumber) {

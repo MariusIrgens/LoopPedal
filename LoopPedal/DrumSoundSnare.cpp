@@ -18,11 +18,7 @@ DrumSoundSnare::DrumSoundSnare(int mixerChannel, AudioMixer4& mixer)
     triangleOsc.amplitude(0.0);
     triangleOsc.frequency(maxFreqTriangleOsc);
 
-    // Define all envelopes
-    envelopeNoiseAmplitude = std::make_unique<Envelope>(maxAmplitudeNoise, minAmplitudeNoise, attackTimeAmplitudeNoise, decayTimeAmplitudeNoise, curvednessAmplitudeNoise);
-    envelopeNoiseFilterFreq = std::make_unique<Envelope>(maxFilterFreqNoise, minFilterFreqNoise, attackTimeFilterFreqNoise, decayTimeFilterFreqNoise, curvednessFilterFreqNoise);
-    envelopeTriangleOscAmplitude = std::make_unique<Envelope>(maxAmplitudeTriangleOsc, minAmplitudeTriangleOsc, attackTimeAmplitudeTriangleOsc, decayTimeAmplitudeTriangleOsc, curvednessAmplitudeTriangleOsc);
-    envelopeTriangleOscFreq = std::make_unique<Envelope>(maxFreqTriangleOsc, minFreqTriangleOsc, attackTimeFreqTriangleOsc, decayTimeFreqTriangleOsc, curvednessFreqTriangleOsc);
+    newDrum();
 
 }
 
@@ -53,5 +49,53 @@ void DrumSoundSnare::update(int deltaTime)
         envelopeTriangleOscFreq->update(deltaTime);
         triangleOsc.frequency(envelopeTriangleOscFreq->read());
     }
+
+}
+
+void DrumSoundSnare::choke()
+{
+    noise.amplitude(0.0f);
+    triangleOsc.amplitude(0.0f);
+    noiseFilter.frequency(0.0f);
+    envelopes_restarted = false;
+}
+
+void DrumSoundSnare::newDrum()
+{
+    choke();
+
+    // Settings
+    
+    // Noise 
+    maxAmplitudeNoise = randomFloat(0.75f, 1.0f);
+    minAmplitudeNoise = 0.0f;
+    attackTimeAmplitudeNoise = randomFloat(0.5f, 1.0f) * 10.0f;
+    decayTimeAmplitudeNoise = randomFloat(0.35f, 1.0f) * 700.0f;
+    curvednessAmplitudeNoise = randomFloat(0.5f, 1.0f);
+
+    maxFilterFreqNoise = randomFloat(0.5f, 1.0f) * 6000.0f;
+    minFilterFreqNoise = randomFloat(0.5f, 1.0f) * 600.0f;
+    attackTimeFilterFreqNoise = randomFloat(0.5f, 1.0f) * 10.0f;
+    decayTimeFilterFreqNoise = randomFloat(0.5f, 1.0f) * 300.0f;
+    curvednessFilterFreqNoise = randomFloat(0.1f, 0.5f);
+
+    // Triangle Osc
+    maxAmplitudeTriangleOsc = randomFloat(0.5f, 1.0f) * 0.6f;
+    minAmplitudeTriangleOsc = 0.0f;
+    attackTimeAmplitudeTriangleOsc = randomFloat(0.5f, 1.0f) * 10.0f;
+    decayTimeAmplitudeTriangleOsc = randomFloat(0.5f, 1.0f) * 500.0f;
+    curvednessAmplitudeTriangleOsc = randomFloat(0.5f, 1.0f);
+
+    maxFreqTriangleOsc = randomFloat(0.25f, 1.0f) * 750.0;
+    minFreqTriangleOsc = randomFloat(0.5f, 1.0f) * 150.0f;
+    attackTimeFreqTriangleOsc = randomFloat(0.5f, 1.0f) * 10.0f;
+    decayTimeFreqTriangleOsc = randomFloat(0.5f, 1.0f) * 450.0f;
+    curvednessFreqTriangleOsc = randomFloat(0.5f, 1.0f);
+
+    // Redefine all envelopes
+    envelopeNoiseAmplitude = std::make_unique<Envelope>(maxAmplitudeNoise, minAmplitudeNoise, attackTimeAmplitudeNoise, decayTimeAmplitudeNoise, curvednessAmplitudeNoise);
+    envelopeNoiseFilterFreq = std::make_unique<Envelope>(maxFilterFreqNoise, minFilterFreqNoise, attackTimeFilterFreqNoise, decayTimeFilterFreqNoise, curvednessFilterFreqNoise);
+    envelopeTriangleOscAmplitude = std::make_unique<Envelope>(maxAmplitudeTriangleOsc, minAmplitudeTriangleOsc, attackTimeAmplitudeTriangleOsc, decayTimeAmplitudeTriangleOsc, curvednessAmplitudeTriangleOsc);
+    envelopeTriangleOscFreq = std::make_unique<Envelope>(maxFreqTriangleOsc, minFreqTriangleOsc, attackTimeFreqTriangleOsc, decayTimeFreqTriangleOsc, curvednessFreqTriangleOsc);
 
 }

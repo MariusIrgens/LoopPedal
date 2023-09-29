@@ -22,12 +22,7 @@ DrumSoundKick::DrumSoundKick(int mixerChannel, AudioMixer4& mixer)
     noiseFilter.frequency(noiseFilterFrequency);
     noise.amplitude(0.0f);
 
-    // Define all envelopes
-    envelopeSineAmplitude = std::make_unique<Envelope>(maxAmplitudeSine, minAmplitudeSine, attackTimeAmplitudeSine, decayTimeAmplitudeSine, curvednessAmplitudeSine);
-    envelopeSineFrequency = std::make_unique<Envelope>(maxFrequencySine, minFrequencySine, attackTimeFrequencySine, decayTimeFrequencySine, curvednessFrequencySine);
-    envelopeClickAmplitude = std::make_unique<Envelope>(maxAmplitudeClick, minAmplitudeClick, attackTimeAmplitudeClick, decayTimeAmplitudeClick, curvednessAmplitudeClick);
-    envelopeClickFrequency = std::make_unique<Envelope>(maxFrequencyClick, minFrequencyClick, attackTimeFrequencyClick, decayTimeFrequencyClick, curvednessFrequencyClick);
-    envelopeNoiseAmplitude = std::make_unique<Envelope>(maxAmplitudeNoise, minAmplitudeNoise, attackTimeAmplitudeNoise, decayTimeAmplitudeNoise, curvednessAmplitudeNoise);
+    newDrum();
 }
 
 void DrumSoundKick::trigger(int velocity) {
@@ -64,5 +59,65 @@ void DrumSoundKick::update(int deltaTime) {
         noise.amplitude(envelopeNoiseAmplitude->read());
     }
 
+
+}
+
+void DrumSoundKick::choke()
+{
+    sineOsc.amplitude(0.0f);
+    clickOsc.amplitude(0.0f);
+    noise.amplitude(0.0f);
+    noiseFilter.frequency(0.0f);
+    envelopes_restarted = false;
+}
+
+
+void DrumSoundKick::newDrum()
+{
+    choke();
+
+    // Settings
+    
+    // Sine Oscillator
+    maxAmplitudeSine = randomFloat(0.7f, 1.0f);
+    minAmplitudeSine = 0.0f;
+    attackTimeAmplitudeSine = randomFloat(0.5f, 1.0f) * 10.0f;
+    decayTimeAmplitudeSine = randomFloat(0.5f, 1.0f) * 500.0f;
+    curvednessAmplitudeSine = randomFloat(0.1f, 0.5f);
+
+    maxFrequencySine = randomFloat(0.75f, 1.0f) * 350.0f;
+    minFrequencySine = randomFloat(0.25f, 1.0f) * 40.0f;
+    attackTimeFrequencySine = randomFloat(0.5f, 1.0f) * 10.0f;
+    decayTimeFrequencySine = randomFloat(0.5f, 1.0f) * 300.0f;
+    curvednessFrequencySine = randomFloat(0.1f, 0.5f);
+
+    // Click Oscillator
+    maxAmplitudeClick = randomFloat(0.5f, 1.0f) * 0.4f;
+    minAmplitudeClick = 0.0f;
+    attackTimeAmplitudeClick = randomFloat(0.5f, 1.0f) * 5.0f;
+    decayTimeAmplitudeClick = randomFloat(0.5f, 1.0f) * 75.0f;
+    curvednessAmplitudeClick = randomFloat(0.25f, 0.75f);
+
+    maxFrequencyClick = randomFloat(0.5f, 1.0f) * 900.0f;
+    minFrequencyClick = randomFloat(0.5f, 1.0f) * 40.0f;
+    attackTimeFrequencyClick = randomFloat(0.5f, 1.0f) * 10.0f;
+    decayTimeFrequencyClick = randomFloat(0.5f, 1.0f) * 40.0f;
+    curvednessFrequencyClick = randomFloat(0.1f, 0.2f);
+
+    // Noise
+    maxAmplitudeNoise = randomFloat(0.5f, 1.0f) * 0.6f;
+    minAmplitudeNoise = 0.0f;
+    attackTimeAmplitudeNoise = randomFloat(0.5f, 1.0f) * 10.0f;
+    decayTimeAmplitudeNoise = randomFloat(0.5f, 1.0f) * 75.0f;
+    curvednessAmplitudeNoise = randomFloat(0.1f, 0.5f);
+
+    noiseFilterFrequency = randomFloat(0.5f, 1.0f) * 3000.0f;
+
+    // Redefine all envelopes
+    envelopeSineAmplitude = std::make_unique<Envelope>(maxAmplitudeSine, minAmplitudeSine, attackTimeAmplitudeSine, decayTimeAmplitudeSine, curvednessAmplitudeSine);
+    envelopeSineFrequency = std::make_unique<Envelope>(maxFrequencySine, minFrequencySine, attackTimeFrequencySine, decayTimeFrequencySine, curvednessFrequencySine);
+    envelopeClickAmplitude = std::make_unique<Envelope>(maxAmplitudeClick, minAmplitudeClick, attackTimeAmplitudeClick, decayTimeAmplitudeClick, curvednessAmplitudeClick);
+    envelopeClickFrequency = std::make_unique<Envelope>(maxFrequencyClick, minFrequencyClick, attackTimeFrequencyClick, decayTimeFrequencyClick, curvednessFrequencyClick);
+    envelopeNoiseAmplitude = std::make_unique<Envelope>(maxAmplitudeNoise, minAmplitudeNoise, attackTimeAmplitudeNoise, decayTimeAmplitudeNoise, curvednessAmplitudeNoise);
 
 }

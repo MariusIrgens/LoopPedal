@@ -19,6 +19,8 @@ public:
     virtual void trigger(int velocity);
     virtual void update(int resolution);
     virtual void choke();
+    virtual void newDrum();
+    virtual float randomFloat(float min, float max);
 
 protected:
     bool debugMode = true;

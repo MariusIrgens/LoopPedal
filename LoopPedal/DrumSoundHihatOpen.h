@@ -20,6 +20,7 @@ public:
 	void trigger(int velocity) override;
 	void update(int deltaTime) override;
 	void choke() override;
+	void newDrum() override;
 
 private:
 

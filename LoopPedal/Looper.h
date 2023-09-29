@@ -15,7 +15,6 @@
 //#define AUDIO_BLOCK_SAMPLES 128
 // Use these with the Teensy Audio Shield
 
-#define SPI_SPEED SD_SCK_MHZ(4)
 #define CS 10
 
 
@@ -32,34 +31,32 @@ public:
 
     Looper(AudioManager* audioManager, AudioMixer4& mixerAudio, AudioMixer4& mixerLooper);
     void setup();
+    void loop();
 
-    // Start or stop recording
-    void record();
+    void recordButton();
+    void stopButton();
+    void startRecording();
+    void continueRecording();
+    void stopRecording();
+    void startPlaying();
+    void continuePlaying();
+    void stopPlaying();
 
-    // Main loop handling recording and playback
-    void update();
-
-    // Reset the loop
-    void reset();
+    void removeLoop();
 
 private:
 
     File frec;
 
     State currentState = State::Idle;
-
-    std::vector<int16_t> recordedBuffer; // The buffer to store recorded audio
-    size_t playbackBufferIndex = 0; // Index to keep track of playback position
-
-    bool isRecording = false;
-    bool hasLoop = false;
-    uint32_t loopLength = 0;
-    uint32_t loopStartTime = 0;
+    bool pressedRecord = false;
+    bool pressedPlay = false;
+    bool pressedStop = false;
 
     AudioRecordQueue recorder;
-    AudioPlayQueue player;
-    AudioManager* audioManagerRef;
+    AudioPlaySdRaw playRaw1;
 
+    AudioManager* audioManagerRef;
     std::unique_ptr<AudioConnection> patchCordAudMix_LoopRec;
     std::unique_ptr<AudioConnection> patchCordLoopPlay_LoopMix;
 };

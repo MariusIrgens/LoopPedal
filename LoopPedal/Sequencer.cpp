@@ -21,16 +21,11 @@ Sequencer::Sequencer(AudioManager* audioManager, AudioMixer4& mixer1, AudioMixer
 
 void Sequencer::newSequence() {
 
-    // Seed the random number generator
-    randomSeed(0);
-    float busyness1and3 = 0.5;
-    float busynessXtra2 = 0.3;
-    float busynessXtra4 = 0.4;
-    int templateIndex = 0;
+    float busyness1and3 = 0.4 + (float)random(0, 20) / 100.0f;
+    float busynessXtra2 = 0.3 + (float)random(0, 20) / 100.0f;
+    float busynessXtra4 = 0.3 + (float)random(0, 20) / 100.0f;
 
-    // Set speed (for random speed at sequence change - call from touch instead)
-    //int newSixteenthNote = 125000;
-    //audioManagerRef->setDrumTimerInterval(newSixteenthNote);
+    int templateIndex = 0; // randomize when we have more templates
 
     // Get template
     templateToUse = drumTemplates->getTemplateByIndex(templateIndex);
@@ -39,15 +34,18 @@ void Sequencer::newSequence() {
     closedHiHatVariable = templateToUse.closedHihatVariable;
     openHiHatVariable = templateToUse.openHihatVariable;
 
-    // Get pattern length and set sequence length
+    // Get and set pattern and sequence lengths
     patternLength = templateToUse.patternLength;
     patternSteps.resize(8, std::vector<int>(templateToUse.patternLength, 0));
     sequenceLength = templateToUse.patternLength * 4;
     sequenceSteps.resize(8, std::vector<int>(sequenceLength, 0));
 
-    // Reset sequence
-    for (auto& seq : sequenceSteps) {
-        std::fill(seq.begin(), seq.end(), 0);
+    // Empty pattern and sequence
+    for (auto& step : patternSteps) {
+        std::fill(step.begin(), step.end(), 0);
+    }
+    for (auto& step : sequenceSteps) {
+        std::fill(step.begin(), step.end(), 0);
     }
 
     // CREATE SEQUENCE
@@ -175,10 +173,6 @@ bool Sequencer::oneMoreHit(int hitNumber, int contribution)
         return false;
 }
 
-void Sequencer::newDrums() {
-    // run parameter changer function on each drum object (virtual function with override)
-}
-
 void Sequencer::nextStep() {
 
     if (debugMode) {
@@ -214,4 +208,13 @@ int Sequencer::readCurrentStep()
 int Sequencer::getPatternLength()
 {
     return patternLength;
+}
+
+void Sequencer::newDrums() {
+
+    kick->newDrum();
+    snare->newDrum();
+    closedHiHat->newDrum();
+    openHiHat->newDrum();
+
 }
