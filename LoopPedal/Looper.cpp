@@ -33,34 +33,38 @@ void Looper::setup()
 void Looper::loop()
 {
     // Respond to button presses
-    if (pressedRecord)
+    if (pressedRecord && majorBeatCue)
     {
         Serial.println("Record Button Press");
-        if (currentState == State::Playing) stopPlaying();
+        if (currentState == State::Looping) stopPlaying();
         if (currentState == State::Idle) startRecording();
         pressedRecord = false;
+        majorBeatCue = false;
     }
-    if (pressedPlay)
+    if (looping && majorBeatCue)
     {
-        Serial.println("Play Button Press");
+        //Serial.println("Play Button Press");
         if (currentState == State::Recording) stopRecording();
         if (currentState == State::Idle) startPlaying();
-        pressedPlay = false;
+        //pressedPlay = false;
     }
     if (pressedStop) 
     {
+        looping = false;
+
         Serial.println("Stop Button Press");
         if (currentState == State::Recording) stopRecording();
-        if (currentState == State::Playing) stopPlaying();
+        if (currentState == State::Looping) stopPlaying();
         removeLoop();
         pressedStop = false;
     }
 
     // If we're playing or recording, carry on...
     if (currentState == State::Recording) {
+        
         continueRecording();
     }
-    if (currentState == State::Playing) {
+    if (currentState == State::Looping) {
         continuePlaying();
     }
 }
@@ -73,9 +77,9 @@ void Looper::recordButton()
         pressedRecord = true;
         break;
     case State::Recording:
-        pressedPlay = true;
+        looping = true;
         break;
-    case State::Playing:
+    case State::Looping:
         pressedRecord = true;
         break;
     default:
@@ -102,7 +106,8 @@ void Looper::removeLoop()
     recorder.clear();
 }
 
-void Looper::startRecording() {
+void Looper::startRecording() 
+{
 
     removeLoop();
     Serial.println("start Recording..."); 
@@ -143,7 +148,8 @@ void Looper::continueRecording()
     }
 }
 
-void Looper::stopRecording() {
+void Looper::stopRecording() 
+{
     Serial.println("stop Recording");
     recorder.end();
     if (currentState == State::Recording) {
@@ -159,20 +165,42 @@ void Looper::stopRecording() {
     currentState = State::Idle;
 }
 
-void Looper::startPlaying() {
-    Serial.println("start Playing");
+void Looper::startPlaying() 
+{
+    timesLooped++;
+    std::string message = "Play loop " + std::to_string(timesLooped);
+    Serial.println(message.c_str());
     playRaw1.play("RECORD.RAW");
-    currentState = State::Playing;
+    currentState = State::Looping;
 }
 
-void Looper::continuePlaying() {
+void Looper::continuePlaying() 
+{
     if (!playRaw1.isPlaying()) {
         stopPlaying();
     }
 }
 
-void Looper::stopPlaying() {
-    Serial.println("stop Playing");
+void Looper::stopPlaying() 
+{
+    std::string message = "Stop loop " + std::to_string(timesLooped);
+    Serial.println(message.c_str());
     playRaw1.stop();
     currentState = State::Idle;
 }
+
+void Looper::setMajorBeatCue(bool cue)
+{
+    majorBeatCue = cue;
+}
+
+bool Looper::getIsRecording() 
+{
+    return currentState == State::Recording;
+}
+
+bool Looper::getIsLooping()
+{
+    return currentState == State::Looping;
+}
+

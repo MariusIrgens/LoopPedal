@@ -9,11 +9,9 @@
 	#include "WProgram.h"
 #endif
 #include <Audio.h>
+#include <SD.h>
 #include <memory>
 #include <vector>
-
-//#define AUDIO_BLOCK_SAMPLES 128
-// Use these with the Teensy Audio Shield
 
 #define CS 10
 
@@ -26,7 +24,7 @@ public:
     enum class State {
         Idle,
         Recording,
-        Playing
+        Looping
     };
 
     Looper(AudioManager* audioManager, AudioMixer4& mixerAudio, AudioMixer4& mixerLooper);
@@ -43,6 +41,9 @@ public:
     void stopPlaying();
 
     void removeLoop();
+    void setMajorBeatCue(bool cue);
+    bool getIsRecording();
+    bool getIsLooping();
 
 private:
 
@@ -50,8 +51,11 @@ private:
 
     State currentState = State::Idle;
     bool pressedRecord = false;
-    bool pressedPlay = false;
+    bool looping = false;
     bool pressedStop = false;
+    bool majorBeatCue = false;
+    bool hasRecording = false;
+    int timesLooped = 0;
 
     AudioRecordQueue recorder;
     AudioPlaySdRaw playRaw1;

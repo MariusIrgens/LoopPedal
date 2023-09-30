@@ -13,7 +13,6 @@
 #include "Looper.h"
 
 #define SYNTH_DELTATIME 25000 // Used to update synth parameters with envelopes
-//#define LOOPER_DELTATIME 3000
 
 class SystemController;
 
@@ -43,7 +42,6 @@ private:
 
     AudioControlSGTL5000 sgtl5000; // SGTL5000 audio codec control object
     AudioInputI2S audioInput; // audio input
-    //AudioAmplifier amplifier; // Amplifier for audio
     AudioOutputI2S audioOutput; // Stereo audio output
     AudioEffectFreeverb reverb; // Effect
 

@@ -52,17 +52,20 @@ void SystemController::blinkLED(int state)
 		interactionManager->blinkLED(0, 0, 0);
 		break;
 	case 1:
-		//Serial.println("Blink seq start!");
+		// Sequence start
 		interactionManager->blinkLED(LEDSTRENGTH, 0, 0);
 		break;
 	case 2:
-		//Serial.println("Blink major beat!");
+		// Major beats
 		interactionManager->blinkLED(0, LEDSTRENGTH, 0);
 		break;
 	case 3:
-		//Serial.println("Blink others!");
+		// All other beats
 		interactionManager->blinkLED(0, 0, LEDSTRENGTH);
 		break;
+	case 4:
+		// Is recording
+		interactionManager->blinkLED(LEDSTRENGTH, 0, LEDSTRENGTH);
 	default:
 		break;
 	}

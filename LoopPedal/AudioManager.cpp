@@ -42,14 +42,13 @@ AudioManager::AudioManager(SystemController* sysController) : systemController(s
 void AudioManager::setup()
 {
     // Codec
-    AudioMemory(60);
+    AudioMemory(120);
     sgtl5000.enable();
     sgtl5000.volume(1.0);
 
     // Audio
     mixerAudio.gain(0, 0.0);// Audio 1
     mixerAudio.gain(0, 0.0);// Audio 2
-    //amplifier.gain(0.5);    // Audio amp
 
     // Drums
     mixerKST.gain(0, 1.0); // Kick
@@ -76,8 +75,8 @@ void AudioManager::setup()
     reverb.roomsize(0.01);
 
     // Timers
-    //drumTimer.begin(stepUpdate, sixteenthNote);
-    //updateTimer.begin(synthUpdate, SYNTH_DELTATIME);
+    drumTimer.begin(stepUpdate, sixteenthNote);
+    updateTimer.begin(synthUpdate, SYNTH_DELTATIME);
 }
 
 void AudioManager::stepUpdate() {
@@ -85,22 +84,35 @@ void AudioManager::stepUpdate() {
     // Advance sequencer with a 16th step
     instance->sequencer->nextStep();
 
-    // Metronome
-    if (instance->sequencer->readCurrentStep() == 0) // Sequence start
+    // SYSTEM METRONOME
+    
+    // Sequence start
+    if (instance->sequencer->readCurrentStep() == 0)
     {
         instance->systemController->blinkLED(1);
+        instance->looper->setMajorBeatCue(true);
     }
-    else if (instance->sequencer->readCurrentStep() % instance->sequencer->getPatternLength() == 0) // Major beats
+    // Major beats
+    else if (instance->sequencer->readCurrentStep() % instance->sequencer->getPatternLength() == 0)
     {
         instance->systemController->blinkLED(2);
+        instance->looper->setMajorBeatCue(true);
     }
-    else if (instance->sequencer->readCurrentStep() % 4 == 0) // Others
+    // All other beats
+    else if (instance->sequencer->readCurrentStep() % 4 == 0) 
     {
         instance->systemController->blinkLED(3);
     }
+    // Between beats (16ths)
     else
     {
-        instance->systemController->blinkLED(0); // Turn off
+        // Light for recording between beats
+        if (instance->looper->getIsRecording())
+            instance->systemController->blinkLED(4); 
+        // Turn off
+        else
+            instance->systemController->blinkLED(0); 
+        instance->looper->setMajorBeatCue(false);
     }
 }
 
@@ -158,25 +170,31 @@ Sequencer* AudioManager::getSequencer()
 
 void AudioManager::newSequence()
 {
-    //Serial.println("New sequence!");
+    if (looper->getIsLooping() || looper->getIsRecording())
+    {
+        Serial.println("Delete loop!");
 
-    //// Seed the random number generator
-    //uint32_t seedForRandomSeed = millis();
-    //randomSeed(seedForRandomSeed);
+        // Remove recorded loop
+        looper->stopButton();
+    }
+    else
+    {
+        Serial.println("New sequence!");
 
-    // Remove recorded loop
-    looper->stopButton();
+        // Seed the random number generator
+        uint32_t seedForRandomSeed = millis();
+        randomSeed(seedForRandomSeed);
 
-    //// Generate new sequence
-    //sequencer->newSequence();
+        // Generate new sequence
+        sequencer->newSequence();
 
-    //// Generate new drums
-    //sequencer->newDrums();
+        // Generate new drums
+        sequencer->newDrums();
 
-    //// Set new tempo
-    //int newBPM = random(70, 140);
-    //setDrumTimerInterval(generateSixteenthFromBPM(newBPM));
-
+        // Set new tempo
+        int newBPM = random(70, 140);
+        setDrumTimerInterval(generateSixteenthFromBPM(newBPM));
+    }
 }
 
 uint32_t AudioManager::generateSixteenthFromBPM(int bpm) 
