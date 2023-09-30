@@ -16,13 +16,13 @@ There are 2 pots.
 One controls audio in volume, the other controls drum volume.  
   
 Top view  
-![20230930_204527](https://github.com/MariusIrgens/LoopPedal/assets/78429226/38571b0b-20b8-4f43-8512-7db4c6c6a570)
+![20230930_204527](https://github.com/MariusIrgens/LoopPedal/assets/78429226/c2855f8c-e439-41cc-b979-e07003665d69)
   
 Back view  
-![20230930_204417](https://github.com/MariusIrgens/LoopPedal/assets/78429226/d67516ff-d455-4721-95ea-1c53fb0cdaf4)
+![20230930_204417](https://github.com/MariusIrgens/LoopPedal/assets/78429226/5f62422c-1067-44e5-98b3-58dfe9e66d2c)
   
 Front view  
-![20230930_204424](https://github.com/MariusIrgens/LoopPedal/assets/78429226/051472aa-3288-4d75-8c0c-875cddc171e2)
+![20230930_204424](https://github.com/MariusIrgens/LoopPedal/assets/78429226/a6245a6f-e33d-45b7-869e-674ee4606ee2)
   
 SD card used (formatted with FAT32)  
-![20230930_204738](https://github.com/MariusIrgens/LoopPedal/assets/78429226/fc7c7b0d-c032-4543-bbef-92062b38cab4)
+![20230930_204738](https://github.com/MariusIrgens/LoopPedal/assets/78429226/814e6101-8a80-4674-9a4b-3e68100ca5be)
