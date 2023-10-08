@@ -4,8 +4,14 @@
 Looper::Looper(AudioManager* audioManager, AudioMixer4& mixerAudio, AudioMixer4& mixerLooper)
     : audioManagerRef(audioManager)
 {
-    // FROM audio-mixer TO loop-recorder
-    patchCordAudMix_LoopRec = std::make_unique<AudioConnection>(mixerAudio, 0, recorder, 0);
+    // FROM audio-mixer TO input-mixer
+    patchCordAudMix_InputMix = std::make_unique<AudioConnection>(mixerAudio, 0, inputMixer, 0);
+
+    // FROM input-mixer TO loop-recorder
+    patchCordInputMix_LoopRec = std::make_unique<AudioConnection>(inputMixer, 0, recorder, 0);
+
+    // FROM loop-player TO input-mixer (Reinput)
+    patchCordLoopPlay_InputMix = std::make_unique<AudioConnection>(playRaw1, 0, inputMixer, 1);
 
     // FROM loop-player TO loop-mixer (wet)
     patchCordLoopPlay_LoopMix = std::make_unique<AudioConnection>(playRaw1, 0, mixerLooper, 1);
@@ -27,45 +33,100 @@ void Looper::setup()
     else
     {
         Serial.println("SD card accessed!");
+        removeLoop();
     }
+
+    inputMixer.gain(0, 1.0f);
+    inputMixer.gain(1, 1.0f);
+
 }
 
 void Looper::loop()
 {
-    // Respond to button presses
-    if (pressedRecord && majorBeatCue)
+    if (majorBeatCue)
     {
-        Serial.println("Record Button Press");
-        if (currentState == State::Looping) stopPlaying();
-        if (currentState == State::Idle) startRecording();
-        pressedRecord = false;
+        currentMajorBeat++;
         majorBeatCue = false;
-    }
-    if (looping && majorBeatCue)
-    {
-        //Serial.println("Play Button Press");
-        if (currentState == State::Recording) stopRecording();
-        if (currentState == State::Idle) startPlaying();
-        //pressedPlay = false;
-    }
-    if (pressedStop) 
-    {
-        looping = false;
 
-        Serial.println("Stop Button Press");
-        if (currentState == State::Recording) stopRecording();
-        if (currentState == State::Looping) stopPlaying();
-        removeLoop();
-        pressedStop = false;
+        // Respond to button presses
+        if (recordAction)
+        {
+            switch (currentState)
+            {
+            // Start Recording
+            case State::Idle:
+                startRecording();
+                currentState = State::Recording;
+                break;
+            // Start Overdubbing
+            //case State::Looping:
+            //    startOverdubbing();             
+            //    currentState = State::Overdubbing;        // Dont know if this is even possible...
+            //    break;
+            default:
+                break;
+            }
+            recordAction = false;
+        }
+
+        else if (playAction)
+        {
+            switch (currentState)
+            {
+            case State::Recording:
+                stopRecording();
+                currentState = State::Looping;
+                break;
+            case State::Overdubbing:
+                stopOverdubbing();
+                currentState = State::Looping;
+                break;
+            default:
+                break;
+            }
+            playAction = false;
+        }
+
+        // Restart recorded sample on correct place
+        if (currentState == State::Looping && (currentMajorBeat - loopMajorBeatStart) % (loopMajorBeatStop - loopMajorBeatStart) == 0)
+        {
+            startPlaying();
+        }
+       
     }
 
-    // If we're playing or recording, carry on...
-    if (currentState == State::Recording) {
-        
+    if (eraseAction)
+    {
+        Serial.println("Erase");
+        switch (currentState)
+        {
+        case State::Looping:
+            stopPlaying();
+            removeLoop();
+            currentState = State::Idle;
+            break;
+        case State::Recording:
+            stopRecording();
+            removeLoop();
+            currentState = State::Idle;
+            break;
+        case State::Overdubbing:
+            stopOverdubbing(); 
+            removeLoop(); // Start from scratch (or else I have to store all intermediate recordings)
+            currentState = State::Idle; 
+            break;
+        default:
+            break;
+        }
+        eraseAction = false;
+    }
+
+    if (currentState == State::Recording) {      
         continueRecording();
     }
-    if (currentState == State::Looping) {
-        continuePlaying();
+
+    if (currentState == State::Overdubbing) {
+        continueRecording();
     }
 }
 
@@ -74,47 +135,60 @@ void Looper::recordButton()
     switch (currentState)
     {
     case State::Idle:
-        pressedRecord = true;
-        break;
-    case State::Recording:
-        looping = true;
+        recordAction = true; // perform record action
         break;
     case State::Looping:
-        pressedRecord = true;
+        recordAction = true; // perform record action
+        break;
+    case State::Recording:
+        playAction = true; // perform play action
+        break;
+    case State::Overdubbing:
+        playAction = true; // perform play action
         break;
     default:
         break;
     }
 }
 
-void Looper::stopButton()
+void Looper::eraseButton()
 {
-    pressedStop = true;
+    eraseAction = true; // perform erase action
 }
 
 void Looper::removeLoop()
 {
-    frec.close();
-    if (SD.exists("RECORD.RAW")) 
+    if (frec) {
+        frec.close();
+    }
+    if (SD.exists(primaryFile.c_str()))
     {
-        SD.remove("RECORD.RAW");
-        if (SD.exists("RECORD.RAW"))
-            Serial.println("Error: Unable to delete the old recording file.");
-        else
-            Serial.println("Removed old file.");
+        SD.remove(primaryFile.c_str());
+        Serial.println("Removed primary file: ");
+        Serial.println(primaryFile.c_str());
+    }
+    if (SD.exists(secondaryFile.c_str()))
+    {
+        SD.remove(secondaryFile.c_str());
+        Serial.println("Removed secondary file: ");
+        Serial.println(secondaryFile.c_str());
     }
     recorder.clear();
 }
 
-void Looper::startRecording() 
+void Looper::startRecording()
 {
-
     removeLoop();
-    Serial.println("start Recording..."); 
-    frec = SD.open("RECORD.RAW", FILE_WRITE);
+
+    timesLooped = 0;
+    loopMajorBeatStart = currentMajorBeat;              // set loop counter start pos
+    Serial.println("start Recording");               
+    frec = SD.open(primaryFile.c_str(), FILE_WRITE);    // open new file for writing
     if (frec) {
-        recorder.begin();
-        currentState = State::Recording;
+        recorder.begin();                               // start new recording 
+    }
+    else {
+        Serial.println("Could not start frec (startRecording)!"); // add error handling
     }
 }
 
@@ -150,43 +224,83 @@ void Looper::continueRecording()
 
 void Looper::stopRecording() 
 {
-    Serial.println("stop Recording");
-    recorder.end();
-    if (currentState == State::Recording) {
-        while (recorder.available() > 0) {
-            byte buffer[256];
-            memcpy(buffer, recorder.readBuffer(), 256);
-            recorder.freeBuffer();
-            frec.write(buffer, 256);
-        }
-        frec.close();
+    loopMajorBeatStop = currentMajorBeat;              // set loop counter stop pos
+    std::string message = "Stop recording. Start: " + std::to_string(loopMajorBeatStart) + ", Stop: " + std::to_string(loopMajorBeatStop);
+    Serial.println(message.c_str());
+
+    recorder.end();                                     // end current recording
+    while (recorder.available() > 0) {                  // push remaining buffer to file
+        byte buffer[256];
+        memcpy(buffer, recorder.readBuffer(), 256);
+        recorder.freeBuffer();
+        frec.write(buffer, 256);
     }
-    recorder.clear();
-    currentState = State::Idle;
+    frec.close();                                       // close file
+    recorder.clear();                                   // clear file
 }
 
-void Looper::startPlaying() 
+void Looper::startPlaying()
 {
+    stopPlaying();
+
     timesLooped++;
     std::string message = "Play loop " + std::to_string(timesLooped);
     Serial.println(message.c_str());
-    playRaw1.play("RECORD.RAW");
-    currentState = State::Looping;
-}
 
-void Looper::continuePlaying() 
-{
-    if (!playRaw1.isPlaying()) {
-        stopPlaying();
-    }
+    playRaw1.play(primaryFile.c_str()); // Play the primaryFile
 }
 
 void Looper::stopPlaying() 
 {
-    std::string message = "Stop loop " + std::to_string(timesLooped);
+    // If playing, stop playing
+
+    if (playRaw1.isPlaying())
+        playRaw1.stop();
+}
+
+void Looper::startOverdubbing()
+{
+    overdubMajorBeatStart = currentMajorBeat;
+    if (SD.exists(secondaryFile.c_str()))
+    {
+        SD.remove(secondaryFile.c_str());
+        Serial.println("Removed secondary file: ");
+        Serial.println(secondaryFile.c_str());
+    }
+
+    Serial.println("Start Overdubbing...");
+    frec = SD.open(secondaryFile.c_str(), FILE_WRITE); // Record into secondaryFile
+    if (frec) {
+        recorder.begin();
+    }
+    else {
+        Serial.println("Could not start frec (startOverdubbing)!"); // add error handling
+    }
+}
+
+
+void Looper::stopOverdubbing()
+{
+    loopMajorBeatStart = overdubMajorBeatStart;
+    loopMajorBeatStop = currentMajorBeat;
+    std::string message = "Stop overdubbing. Start: " + std::to_string(loopMajorBeatStart) + ", Stop: " + std::to_string(loopMajorBeatStop);
     Serial.println(message.c_str());
-    playRaw1.stop();
-    currentState = State::Idle;
+
+    Serial.println("Stop Overdubbing");
+    recorder.end();
+    while (recorder.available() > 0) {
+        byte buffer[256];
+        memcpy(buffer, recorder.readBuffer(), 256);
+        recorder.freeBuffer();
+        frec.write(buffer, 256);
+        frec.close();
+    }
+    recorder.clear();
+
+    // After stopping overdubbing, swap the file roles
+    std::string temp = primaryFile;
+    primaryFile = secondaryFile;
+    secondaryFile = temp;
 }
 
 void Looper::setMajorBeatCue(bool cue)

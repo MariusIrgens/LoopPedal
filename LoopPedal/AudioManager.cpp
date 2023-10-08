@@ -15,7 +15,7 @@ AudioManager::AudioManager(SystemController* sysController) : systemController(s
     patchCordAudMix_LoopMix = std::make_unique<AudioConnection>(mixerAudio, 0, mixerLooper, 0);
 
     // FROM loop-mixer TO end-mixer
-    patchCordLoopMix_EndMix = std::make_unique<AudioConnection>(mixerLooper, 0, mixerEnd, 2);
+    //patchCordLoopMix_EndMix = std::make_unique<AudioConnection>(mixerLooper, 0, mixerEnd, 2);
 
     // DRUMS
     
@@ -31,8 +31,14 @@ AudioManager::AudioManager(SystemController* sysController) : systemController(s
     patchCordReverb_EndMix = std::make_unique<AudioConnection>(reverb, 0, mixerEnd, 1);
 
     // FROM end-mixer TO output
-    patchCordEndMix_AudioOutR = std::make_unique<AudioConnection>(mixerEnd, 0, audioOutput, 0);
-    patchCordEndMix_AudioOutL = std::make_unique<AudioConnection>(mixerEnd, 0, audioOutput, 1);
+    //patchCordEndMix_AudioOutR = std::make_unique<AudioConnection>(mixerEnd, 0, audioOutput, 0);
+    //patchCordEndMix_AudioOutL = std::make_unique<AudioConnection>(mixerEnd, 0, audioOutput, 1);
+
+    // ALT: FROM loop-mixer TO output 0
+    patchCordLoopMix_EndMix = std::make_unique<AudioConnection>(mixerLooper, 0, audioOutput, 0);
+    // ALT: FROM reverb TO end-mixer 1
+    patchCordReverb_EndMix = std::make_unique<AudioConnection>(mixerEnd, 0, audioOutput, 1);
+
 
     instance = this;
     looper = std::make_unique<Looper>(this, mixerAudio, mixerLooper);
@@ -66,7 +72,7 @@ void AudioManager::setup()
 
     // End-mixer
     mixerEnd.gain(0, 0.2); // Drums (dry)
-    mixerEnd.gain(1, 0.04); // Drums reverb (wet)
+    mixerEnd.gain(1, 0.05); // Drums reverb (wet)
     mixerEnd.gain(2, 1.0); // Audio thru
     mixerEnd.gain(3, 1.0); // Audio Loop
 
@@ -175,7 +181,7 @@ void AudioManager::newSequence()
         Serial.println("Delete loop!");
 
         // Remove recorded loop
-        looper->stopButton();
+        looper->eraseButton();
     }
     else
     {

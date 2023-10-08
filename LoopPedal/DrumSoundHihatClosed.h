@@ -28,12 +28,15 @@ private:
 	// Modules
 	AudioSynthNoiseWhite noise;
 	AudioFilterStateVariable noiseFilter;
+	AudioFilterStateVariable EQFilter;
 	AudioMixer4 oscMixer;
 
 	// Patchings
 	std::unique_ptr<AudioConnection> patchCordNoise_Filter;
 	std::unique_ptr<AudioConnection> patchCordFilter_Mix;
-	std::unique_ptr<AudioConnection> patchCordMix_Out;
+	std::unique_ptr<AudioConnection> patchCordMix_EQ;
+	std::unique_ptr<AudioConnection> patchCordEQ_Out;
+
 
 	// Envelopes
 	bool envelopes_restarted = false;

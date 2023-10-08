@@ -24,8 +24,9 @@ public:
 private:
 
 	// Modules
+	AudioSynthWaveform triangleMod;
+	AudioSynthWaveformModulated triangleOsc;
 	AudioSynthNoiseWhite noise;
-	AudioSynthWaveform triangleOsc;
 	AudioFilterStateVariable noiseFilter;
 	AudioMixer4 oscMixer;
 
@@ -35,6 +36,8 @@ private:
 	std::unique_ptr<AudioConnection> patchCordFilter_Mix;
 	std::unique_ptr<AudioConnection> patchCordTriangleOsc_Mix;
 	std::unique_ptr<AudioConnection> patchCordMix_Out;
+
+	std::unique_ptr<AudioConnection> patchCordTriangleMod_TriangleOsc;
 
 	// Envelopes
 	bool envelopes_restarted = false;

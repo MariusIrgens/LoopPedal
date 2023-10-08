@@ -180,12 +180,12 @@ void Sequencer::nextStep() {
         Serial.println(currentStep);
     }
     
-    if (sequenceSteps[0][currentStep] > 0) kick->trigger(sequenceSteps[0][currentStep]);
-    if (sequenceSteps[1][currentStep] > 0) snare->trigger(sequenceSteps[1][currentStep]);
-    if (sequenceSteps[2][currentStep] > 0) highTom->trigger(sequenceSteps[1][currentStep]);
-    if (sequenceSteps[3][currentStep] > 0) lowTom->trigger(sequenceSteps[1][currentStep]);
-    if (sequenceSteps[4][currentStep] > 0) { closedHiHat->trigger(sequenceSteps[1][currentStep]); openHiHat->choke();}
-    if (sequenceSteps[5][currentStep] > 0) openHiHat->trigger(sequenceSteps[1][currentStep]);
+    if (sequenceSteps[0][currentStep] > 0) kick->trigger(sequenceSteps[0][currentStep]);                                    // Kick    
+    if (sequenceSteps[1][currentStep] > 0) snare->trigger(sequenceSteps[1][currentStep]);                                   // Snare
+    if (sequenceSteps[2][currentStep] > 0) highTom->trigger(sequenceSteps[1][currentStep]);                                 // High Tom
+    if (sequenceSteps[3][currentStep] > 0) lowTom->trigger(sequenceSteps[1][currentStep]);                                  // Low Tom
+    if (sequenceSteps[5][currentStep] > 0) openHiHat->trigger(sequenceSteps[1][currentStep]);                               // Open Hihat
+    else if (sequenceSteps[4][currentStep] > 0) { closedHiHat->trigger(sequenceSteps[1][currentStep]); openHiHat->choke();} // Closed Hihat - Only play if no Open Hihat. Choke previous Open Hihat.
 
     currentStep = (currentStep + 1) % sequenceLength;
 }

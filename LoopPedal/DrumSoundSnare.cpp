@@ -9,6 +9,8 @@ DrumSoundSnare::DrumSoundSnare(int mixerChannel, AudioMixer4& mixer)
     patchCordTriangleOsc_Mix = std::make_unique<AudioConnection>(triangleOsc, 0, oscMixer, 1);
     patchCordMix_Out = std::make_unique<AudioConnection>(oscMixer, 0, mixer, mixerChannel);
 
+    patchCordTriangleMod_TriangleOsc = std::make_unique<AudioConnection>(triangleMod, 0, triangleOsc, 0);
+
     // Set all base values
     oscMixer.gain(0, 1.0f);
     oscMixer.gain(1, 1.0f);
@@ -80,17 +82,20 @@ void DrumSoundSnare::newDrum()
     curvednessFilterFreqNoise = randomFloat(0.1f, 0.5f);
 
     // Triangle Osc
-    maxAmplitudeTriangleOsc = randomFloat(0.5f, 1.0f) * 0.6f;
+    maxAmplitudeTriangleOsc = randomFloat(0.5f, 1.0f) * 0.4f;
     minAmplitudeTriangleOsc = 0.0f;
     attackTimeAmplitudeTriangleOsc = randomFloat(0.5f, 1.0f) * 10.0f;
-    decayTimeAmplitudeTriangleOsc = randomFloat(0.5f, 1.0f) * 500.0f;
+    decayTimeAmplitudeTriangleOsc = randomFloat(0.5f, 1.0f) * decayTimeAmplitudeNoise;
     curvednessAmplitudeTriangleOsc = randomFloat(0.5f, 1.0f);
 
-    maxFreqTriangleOsc = randomFloat(0.25f, 1.0f) * 750.0;
-    minFreqTriangleOsc = randomFloat(0.5f, 1.0f) * 150.0f;
+    maxFreqTriangleOsc = randomFloat(0.25f, 1.0f) * 650.0f;
+    minFreqTriangleOsc = randomFloat(0.25f, 0.75f) * maxFreqTriangleOsc;
     attackTimeFreqTriangleOsc = randomFloat(0.5f, 1.0f) * 10.0f;
     decayTimeFreqTriangleOsc = randomFloat(0.5f, 1.0f) * 450.0f;
     curvednessFreqTriangleOsc = randomFloat(0.5f, 1.0f);
+
+    // Triangle Modulation
+    triangleMod.begin(randomFloat(0.0f, 0.1f), randomFloat(0.0f, 1.0f) * 500.0f, random(0, 8));
 
     // Redefine all envelopes
     envelopeNoiseAmplitude = std::make_unique<Envelope>(maxAmplitudeNoise, minAmplitudeNoise, attackTimeAmplitudeNoise, decayTimeAmplitudeNoise, curvednessAmplitudeNoise);

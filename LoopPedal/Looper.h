@@ -12,6 +12,7 @@
 #include <SD.h>
 #include <memory>
 #include <vector>
+#include <string>
 
 #define CS 10
 
@@ -24,7 +25,8 @@ public:
     enum class State {
         Idle,
         Recording,
-        Looping
+        Looping,
+        Overdubbing
     };
 
     Looper(AudioManager* audioManager, AudioMixer4& mixerAudio, AudioMixer4& mixerLooper);
@@ -32,13 +34,14 @@ public:
     void loop();
 
     void recordButton();
-    void stopButton();
+    void eraseButton();
     void startRecording();
     void continueRecording();
     void stopRecording();
     void startPlaying();
-    void continuePlaying();
     void stopPlaying();
+    void startOverdubbing();
+    void stopOverdubbing();
 
     void removeLoop();
     void setMajorBeatCue(bool cue);
@@ -47,22 +50,36 @@ public:
 
 private:
 
+    AudioManager* audioManagerRef;
+
     File frec;
+    std::string primaryFile = "LOOP1.RAW";
+    std::string secondaryFile = "LOOP2.RAW";
 
     State currentState = State::Idle;
-    bool pressedRecord = false;
-    bool looping = false;
-    bool pressedStop = false;
+    bool recordAction = false;
+    bool playAction = false;
+    bool eraseAction = false;
     bool majorBeatCue = false;
     bool hasRecording = false;
     int timesLooped = 0;
+    int currentMajorBeat = 0;
+    int loopMajorBeatStart = 0;
+    int loopMajorBeatStop = 9999999;
+    int overdubMajorBeatStart = 0;
 
+
+    // Patching
     AudioRecordQueue recorder;
     AudioPlaySdRaw playRaw1;
+    AudioMixer4 inputMixer;
 
-    AudioManager* audioManagerRef;
-    std::unique_ptr<AudioConnection> patchCordAudMix_LoopRec;
+    std::unique_ptr<AudioConnection> patchCordAudMix_InputMix;
+    std::unique_ptr<AudioConnection> patchCordLoopPlay_InputMix;
+
+    std::unique_ptr<AudioConnection> patchCordInputMix_LoopRec;
     std::unique_ptr<AudioConnection> patchCordLoopPlay_LoopMix;
+
 };
 
 #endif
