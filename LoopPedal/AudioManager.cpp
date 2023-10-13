@@ -81,7 +81,8 @@ void AudioManager::setup()
     reverb.roomsize(0.01);
 
     // Timers
-    drumTimer.begin(stepUpdate, sixteenthNote);
+    int newSixteenthNote = generateSixteenthFromBPM(currentBPM);
+    drumTimer.begin(stepUpdate, newSixteenthNote);
     updateTimer.begin(synthUpdate, SYNTH_DELTATIME);
 }
 
@@ -112,12 +113,7 @@ void AudioManager::stepUpdate() {
     // Between beats (16ths)
     else
     {
-        // Light for recording between beats
-        if (instance->looper->getIsRecording())
-            instance->systemController->blinkLED(4); 
-        // Turn off
-        else
-            instance->systemController->blinkLED(0); 
+        instance->systemController->blinkLED(0); 
         instance->looper->setMajorBeatCue(false);
     }
 }
@@ -133,9 +129,9 @@ void AudioManager::looperLoop()
 }
 
 void AudioManager::setDrumTimerInterval(int newSixteenthNote) {
-    sixteenthNote = newSixteenthNote;
-    drumTimer.end();
-    drumTimer.begin(stepUpdate, sixteenthNote);
+    drumTimer.update(newSixteenthNote);
+    Serial.print("BPM: ");
+    Serial.println(currentBPM);
 }
 
 void AudioManager::setAudioVolume(float volume)
@@ -198,8 +194,8 @@ void AudioManager::newSequence()
         sequencer->newDrums();
 
         // Set new tempo
-        int newBPM = random(70, 140);
-        setDrumTimerInterval(generateSixteenthFromBPM(newBPM));
+        currentBPM = random(70, 140);
+        setDrumTimerInterval(generateSixteenthFromBPM(currentBPM));
     }
 }
 
@@ -212,4 +208,19 @@ uint32_t AudioManager::generateSixteenthFromBPM(int bpm)
     uint32_t sixteenthNoteDurationMicroseconds = static_cast<uint32_t>(quarterNoteDurationMicroseconds / 4.0f); 
 
     return sixteenthNoteDurationMicroseconds;
+}
+
+SystemController* AudioManager::getSystemController()
+{
+    return systemController;
+}
+
+uint32_t AudioManager::getCurrentBPM()
+{
+    return currentBPM;
+}
+
+void AudioManager::setCurrentBPM(uint32_t newBPM)
+{
+    currentBPM = newBPM;
 }

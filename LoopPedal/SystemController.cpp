@@ -53,21 +53,44 @@ void SystemController::blinkLED(int state)
 		break;
 	case 1:
 		// Sequence start
-		interactionManager->blinkLED(LEDSTRENGTH, 0, 0);
+		interactionManager->blinkLED(0, LEDSTRENGTH, LEDSTRENGTH);
 		break;
 	case 2:
 		// Major beats
-		interactionManager->blinkLED(0, LEDSTRENGTH, 0);
+		interactionManager->blinkLED(LEDSTRENGTH, LEDSTRENGTH, 0);
 		break;
 	case 3:
 		// All other beats
-		interactionManager->blinkLED(0, 0, LEDSTRENGTH);
+		interactionManager->blinkLED(0, LEDSTRENGTH, 0);
 		break;
-	case 4:
-		// Is recording
-		interactionManager->blinkLED(LEDSTRENGTH, 0, LEDSTRENGTH);
 	default:
 		break;
 	}
 }
 
+void SystemController::lightRecLED(int state)
+{
+	switch (state)
+	{
+	case 0:
+		interactionManager->lightRecLED(0, 0);
+		break;
+	case 1:
+		interactionManager->lightRecLED(LEDSTRENGTH, 0);
+		break;
+	case 2:
+		interactionManager->lightRecLED(0, LEDSTRENGTH);
+		break;
+	default:
+		break;
+	}
+}
+
+void SystemController::incrementBPM(int amount)
+{
+	uint32_t currentBPM = audioManager->getCurrentBPM();
+	currentBPM += amount;
+	audioManager->setCurrentBPM(currentBPM);
+	uint32_t newSixteenthNote = audioManager->generateSixteenthFromBPM(currentBPM);
+	audioManager->setDrumTimerInterval(newSixteenthNote);
+}

@@ -4,6 +4,8 @@
 // Define static members
 volatile unsigned long InteractionManager::lastInterruptTime1 = 0;
 volatile unsigned long InteractionManager::lastInterruptTime2 = 0;
+volatile unsigned long InteractionManager::lastEncoderInterruptTime = 0;
+volatile unsigned long InteractionManager::lastFlipInterruptTime = 0;
 InteractionManager* InteractionManager::instance = nullptr; 
 
 InteractionManager::InteractionManager(SystemController* systemContr) 
@@ -24,15 +26,24 @@ void InteractionManager::setup() {
     pinMode(potPin1, INPUT);
     pinMode(potPin2, INPUT);
 
-    // LED
-    pinMode(LEDR_Pin, OUTPUT);
-    pinMode(LEDG_Pin, OUTPUT);
-    pinMode(LEDB_Pin, OUTPUT);
+    // LED metronome
+    pinMode(LEDRMet_Pin, OUTPUT);
+    pinMode(LEDGMet_Pin, OUTPUT);
+    pinMode(LEDBMet_Pin, OUTPUT);
 
-    // TEST
-    //pinMode(test_Pin, OUTPUT);
-    //analogWrite(test_Pin, 255);
+    // LED record
+    pinMode(LEDRRec_Pin, OUTPUT);
+    pinMode(LEDGRec_Pin, OUTPUT);
 
+    // Rotary Encoder
+    pinMode(RotEncPinA, INPUT_PULLUP);
+    pinMode(RotEncPinB, INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(RotEncPinA), InteractionManager::updateEncoder, CHANGE);
+    attachInterrupt(digitalPinToInterrupt(RotEncPinB), InteractionManager::updateEncoder, CHANGE);
+
+    // Flip Switch
+    pinMode(flipSwitchPin1, INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(flipSwitchPin1), InteractionManager::updateFlipSwitch, CHANGE);
 
 }
 
@@ -78,7 +89,52 @@ int InteractionManager::readPotentiometer(int potNumber) {
 }
 
 void InteractionManager::blinkLED(int r, int g, int b) {
-    analogWrite(LEDR_Pin, r);
-    analogWrite(LEDG_Pin, g);
-    analogWrite(LEDB_Pin, b);
+    analogWrite(LEDRMet_Pin, r);
+    analogWrite(LEDGMet_Pin, g);
+    analogWrite(LEDBMet_Pin, b);
+}
+
+void InteractionManager::lightRecLED(int r, int g)
+{
+    analogWrite(LEDRRec_Pin, r);
+    analogWrite(LEDGRec_Pin, g);
+}
+
+void InteractionManager::updateEncoder() {
+    // Debounce
+    unsigned long currentInterruptTime = millis();
+    if (currentInterruptTime - lastEncoderInterruptTime > 50)
+    {
+
+        int MSB = digitalRead(instance->RotEncPinA);
+        int LSB = digitalRead(instance->RotEncPinB);
+
+        if (MSB == 1 && LSB == 0)
+            instance->rotEncTurnDetected("CW");
+        else if (MSB == 0 && LSB == 1)
+            instance->rotEncTurnDetected("CCW");
+
+        lastEncoderInterruptTime = currentInterruptTime;
+    }
+}
+
+void InteractionManager::rotEncTurnDetected(String direction) {
+    if (direction == "CW" && instance->rotaryActionSetBPM)
+        systemController->incrementBPM(2);
+    else if (direction == "CCW" && instance->rotaryActionSetBPM)
+        systemController->incrementBPM(-2);
+}
+
+void InteractionManager::updateFlipSwitch()
+{
+    unsigned long currentInterruptTime = millis();
+    // Debounce
+    if (currentInterruptTime - lastFlipInterruptTime > 200) {
+        int MSB = digitalRead(instance->flipSwitchPin1);
+        Serial.print("Flip: ");
+        Serial.println(MSB);
+        // change rotary action type
+        instance->rotaryActionSetBPM = !instance->rotaryActionSetBPM;
+        lastFlipInterruptTime = currentInterruptTime;
+    }
 }

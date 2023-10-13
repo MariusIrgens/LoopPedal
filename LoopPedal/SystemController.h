@@ -24,8 +24,10 @@ public:
 	void newSequence();
 	void record();
 	void blinkLED(int state);
+	void lightRecLED(int state);
 	void setup();
 	void loop();
+	void incrementBPM(int direction);
 
 	std::unique_ptr<AudioManager> audioManager;
 	std::unique_ptr<InteractionManager> interactionManager;

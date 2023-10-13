@@ -30,9 +30,12 @@ public:
     Sequencer* getSequencer();
     void newSequence();
     uint32_t generateSixteenthFromBPM(int BPM);
+    SystemController* getSystemController();
+    SystemController* systemController;
+    uint32_t getCurrentBPM();
+    void setCurrentBPM(uint32_t newBPM);
 
 private:
-    SystemController* systemController;
     static AudioManager* instance;
     std::unique_ptr<Looper> looper;
     std::unique_ptr<Sequencer> sequencer;
@@ -69,6 +72,7 @@ private:
     uint32_t lastTriggerTime = 0; // Used to trigger drum sound periodically
 
     uint32_t sixteenthNote = 125000;
+    uint32_t currentBPM = 120;
 
     float drumVolume = 0.0f;
     float audioVolume = 0.0f;

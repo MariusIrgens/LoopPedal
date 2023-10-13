@@ -1,5 +1,7 @@
 #include "Looper.h"
 #include "AudioManager.h"
+#include "SystemController.h"
+
 
 Looper::Looper(AudioManager* audioManager, AudioMixer4& mixerAudio, AudioMixer4& mixerLooper)
     : audioManagerRef(audioManager)
@@ -61,7 +63,7 @@ void Looper::loop()
             // Start Overdubbing
             //case State::Looping:
             //    startOverdubbing();             
-            //    currentState = State::Overdubbing;        // Dont know if this is even possible...
+            //    currentState = State::Overdubbing;        // Need to fix SD-can-not-read-and-write-at-same-time problem first!
             //    break;
             default:
                 break;
@@ -121,12 +123,31 @@ void Looper::loop()
         eraseAction = false;
     }
 
-    if (currentState == State::Recording) {      
+    if (currentState == State::Recording) {
         continueRecording();
     }
 
     if (currentState == State::Overdubbing) {
         continueRecording();
+    }
+
+    // LED
+    switch (currentState)
+    {
+    case State::Idle:
+        audioManagerRef->getSystemController()->lightRecLED(0);
+        break;
+    case State::Looping:
+        audioManagerRef->getSystemController()->lightRecLED(1);
+        break;
+    case State::Recording:
+        audioManagerRef->getSystemController()->lightRecLED(2);
+        break;
+    case State::Overdubbing:
+        
+        break;
+    default:
+        break;
     }
 }
 
@@ -277,7 +298,6 @@ void Looper::startOverdubbing()
         Serial.println("Could not start frec (startOverdubbing)!"); // add error handling
     }
 }
-
 
 void Looper::stopOverdubbing()
 {
