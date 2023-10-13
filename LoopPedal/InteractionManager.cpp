@@ -17,8 +17,8 @@ void InteractionManager::setup() {
     // Buttons
     pinMode(buttonPin1, INPUT_PULLUP);
     pinMode(buttonPin2, INPUT_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(buttonPin1), InteractionManager::button1ISR, FALLING);
-    attachInterrupt(digitalPinToInterrupt(buttonPin2), InteractionManager::button2ISR, FALLING);
+    attachInterrupt(digitalPinToInterrupt(buttonPin1), InteractionManager::button1ISR, CHANGE);
+    attachInterrupt(digitalPinToInterrupt(buttonPin2), InteractionManager::button2ISR, CHANGE);
 
     // Potentiometers
     pinMode(potPin1, INPUT);
