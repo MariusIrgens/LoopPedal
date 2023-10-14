@@ -25,6 +25,10 @@ void DrumSoundTomLow::trigger(int velocity)
     envelopes_restarted = true;
     envelopeTriangleOscAmplitude->start();
     envelopeTriangleOscFreq->start();
+
+    if (debugMode) {
+        Serial.println("Low tom sound");
+    }
 }
 
 void DrumSoundTomLow::update(int deltaTime)

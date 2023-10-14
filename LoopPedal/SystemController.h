@@ -28,6 +28,7 @@ public:
 	void setup();
 	void loop();
 	void incrementBPM(int direction);
+	void shouldChange(bool shouldChange);
 
 	std::unique_ptr<AudioManager> audioManager;
 	std::unique_ptr<InteractionManager> interactionManager;

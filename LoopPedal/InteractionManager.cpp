@@ -105,7 +105,6 @@ void InteractionManager::updateEncoder() {
     unsigned long currentInterruptTime = millis();
     if (currentInterruptTime - lastEncoderInterruptTime > 50)
     {
-
         int MSB = digitalRead(instance->RotEncPinA);
         int LSB = digitalRead(instance->RotEncPinB);
 
@@ -129,11 +128,13 @@ void InteractionManager::updateFlipSwitch()
 {
     unsigned long currentInterruptTime = millis();
     // Debounce
-    if (currentInterruptTime - lastFlipInterruptTime > 200) {
-        int MSB = digitalRead(instance->flipSwitchPin1);
-        Serial.print("Flip: ");
-        Serial.println(MSB);
-        // change rotary action type
+    if (currentInterruptTime - lastFlipInterruptTime > 50) {
+        int MSB = digitalRead(instance->flipSwitchPin1);        
+        if (MSB == 0)
+            instance->systemController->shouldChange(false);
+        else
+            instance->systemController->shouldChange(true);
+
         instance->rotaryActionSetBPM = !instance->rotaryActionSetBPM;
         lastFlipInterruptTime = currentInterruptTime;
     }

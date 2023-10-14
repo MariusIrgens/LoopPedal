@@ -27,15 +27,24 @@ public:
         std::vector<int> kickAlways;
         std::vector<int> kickVariable;
     };
+    
+    struct TomFill {
+        std::vector<int> highTom;
+        std::vector<int> lowTom;
+    };
 
     DrumTemplates();
 
     const std::vector<Template>& getAllTemplates();
     const Template& getTemplateByIndex(size_t index);
+    const TomFill& getTomFillByIndex(size_t index);
+    int getMaxTemplateIndex();
+    int getMaxTomFillIndex();
 
 private:
-    std::vector<Template> allTemplates; // This will store all the templates for the instance
-    // Could have one vector for each signature
+    std::vector<Template> allTemplates;
+    std::vector<TomFill> allTomFills;
+
 };
 
 #endif

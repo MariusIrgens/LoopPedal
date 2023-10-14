@@ -2,6 +2,9 @@
 
 DrumTemplates::DrumTemplates() {
 
+    // BEAT TEMPLATES
+    // copy-paste and replace inside with HTML output
+
     // Construct and add basicBeat
     Template beat =
     {
@@ -19,7 +22,7 @@ DrumTemplates::DrumTemplates() {
     };
     allTemplates.push_back(beat);
 
-    // copy-paste and replace inside with HTML output
+    // Construct and add fiveFourBeat
     beat =
     {
         .name = "fiveFourBeat",
@@ -37,6 +40,57 @@ DrumTemplates::DrumTemplates() {
     allTemplates.push_back(beat);
 
 
+
+    // TOM FILLS
+    // Always 2 beats long, for simplicity (8 steps)
+    TomFill fill = 
+    {
+        .highTom = {1, 2, 4},
+        .lowTom = {5, 7}
+    };
+    allTomFills.push_back(fill);
+
+    fill =
+    {
+        .highTom = {1, 4},
+        .lowTom = {5, 7}
+    };
+    allTomFills.push_back(fill);
+
+    fill =
+    {
+        .highTom = {1, 2, 3, 4},
+        .lowTom = {5, 6, 7, 8}
+    };
+    allTomFills.push_back(fill);
+
+    fill =
+    {
+        .highTom = {2, 4},
+        .lowTom = {5, 7, 8}
+    };
+    allTomFills.push_back(fill);
+
+    fill =
+    {
+        .highTom = {3, 4},
+        .lowTom = {7, 8}
+    };
+    allTomFills.push_back(fill);
+
+    fill =
+    {
+        .highTom = {1, 3},
+        .lowTom = {2, 4, 6}
+    };
+    allTomFills.push_back(fill);
+
+    fill =
+    {
+        .highTom = {1, 2},
+        .lowTom = {4, 5}
+    };
+    allTomFills.push_back(fill);
 }
 
 const std::vector<DrumTemplates::Template>& DrumTemplates::getAllTemplates() {
@@ -46,7 +100,25 @@ const std::vector<DrumTemplates::Template>& DrumTemplates::getAllTemplates() {
 const DrumTemplates::Template& DrumTemplates::getTemplateByIndex(size_t index) {
     if (index >= allTemplates.size())
     {
-        // Handle the error appropriately, maybe throw an exception or return a default value
+        index = 0;
     }
     return allTemplates[index];
+}
+
+const DrumTemplates::TomFill& DrumTemplates::getTomFillByIndex(size_t index) {
+    if (index >= allTomFills.size())
+    {
+        index = 0;
+    }
+    return allTomFills[index];
+}
+
+int DrumTemplates::getMaxTemplateIndex()
+{
+    return allTemplates.size() - 1;
+}
+
+int DrumTemplates::getMaxTomFillIndex()
+{
+    return allTomFills.size() - 1;
 }

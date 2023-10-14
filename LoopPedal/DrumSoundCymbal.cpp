@@ -1,6 +1,6 @@
-#include "DrumSoundHihatClosed.h"
+#include "DrumSoundCymbal.h"
 
-DrumSoundHihatClosed::DrumSoundHihatClosed(int mixerChannel, AudioMixer4& mixer)
+DrumSoundCymbal::DrumSoundCymbal(int mixerChannel, AudioMixer4& mixer)
     : DrumSound(mixerChannel, mixer)
 {
     patchCordNoise_Filter = std::make_unique<AudioConnection>(noise, 0, noiseFilter, 0);
@@ -18,18 +18,18 @@ DrumSoundHihatClosed::DrumSoundHihatClosed(int mixerChannel, AudioMixer4& mixer)
 
 }
 
-void DrumSoundHihatClosed::trigger(int velocity) {
+void DrumSoundCymbal::trigger(int velocity) {
 
     envelopes_restarted = true;
     envelopeNoiseAmplitude->start();
     envelopeNoiseFilterFreq->start();
 
     if (debugMode) {
-        Serial.println("Closed hihat sound");
+        Serial.println("Cymbal sound");
     }
 }
 
-void DrumSoundHihatClosed::update(int deltaTime)
+void DrumSoundCymbal::update(int deltaTime)
 {
     if (envelopes_restarted)
     {
@@ -40,30 +40,30 @@ void DrumSoundHihatClosed::update(int deltaTime)
     }
 }
 
-void DrumSoundHihatClosed::choke()
+void DrumSoundCymbal::choke()
 {
     noise.amplitude(0.0f);
     noiseFilter.frequency(0.0f);
     envelopes_restarted = false;
 }
 
-void DrumSoundHihatClosed::newDrum()
+void DrumSoundCymbal::newDrum()
 {
     choke();
 
     // Settings
-    
+
     // Noise 
     maxAmplitudeNoise = randomFloat(0.3f, 0.5f);
     minAmplitudeNoise = 0.0f;
     attackTimeAmplitudeNoise = randomFloat(0.5f, 1.0f) * 10.0f;
-    decayTimeAmplitudeNoise = randomFloat(0.5f, 1.0f) * 100.0f;
+    decayTimeAmplitudeNoise = randomFloat(0.5f, 1.0f) * 2000.0f;
     curvednessAmplitudeNoise = randomFloat(0.1f, 0.5f);
 
-    maxFilterFreqNoise = randomFloat(0.5f, 1.0f) * 12000.0;
+    maxFilterFreqNoise = randomFloat(0.5f, 1.0f) * 10000.0;
     minFilterFreqNoise = randomFloat(0.5f, 1.0f) * 5000.0f;
     attackTimeFilterFreqNoise = randomFloat(0.5f, 1.0f) * 10.0f;
-    decayTimeFilterFreqNoise = randomFloat(0.5f, 1.0f) * 500.0f;
+    decayTimeFilterFreqNoise = randomFloat(0.5f, 1.0f) * 2000.0f;
     curvednessFilterFreqNoise = randomFloat(0.1f, 0.5f);
 
     // High Pass Filter

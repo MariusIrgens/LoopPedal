@@ -84,6 +84,8 @@ void AudioManager::setup()
     int newSixteenthNote = generateSixteenthFromBPM(currentBPM);
     drumTimer.begin(stepUpdate, newSixteenthNote);
     updateTimer.begin(synthUpdate, SYNTH_DELTATIME);
+
+    newSequence();
 }
 
 void AudioManager::stepUpdate() {
@@ -98,12 +100,14 @@ void AudioManager::stepUpdate() {
     {
         instance->systemController->blinkLED(1);
         instance->looper->setMajorBeatCue(true);
+        instance->sequencer->incrementCurrentPattern();
     }
     // Major beats
     else if (instance->sequencer->readCurrentStep() % instance->sequencer->getPatternLength() == 0)
     {
         instance->systemController->blinkLED(2);
         instance->looper->setMajorBeatCue(true);
+        instance->sequencer->incrementCurrentPattern();
     }
     // All other beats
     else if (instance->sequencer->readCurrentStep() % 4 == 0) 
@@ -188,7 +192,8 @@ void AudioManager::newSequence()
         randomSeed(seedForRandomSeed);
 
         // Generate new sequence
-        sequencer->newSequence();
+        int tomFillIndex = random(0, sequencer->getDrumTemplates()->getMaxTomFillIndex() + 1); // get random tom fill
+        sequencer->newSequence(1, tomFillIndex);
 
         // Generate new drums
         sequencer->newDrums();

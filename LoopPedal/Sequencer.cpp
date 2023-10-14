@@ -11,21 +11,20 @@ Sequencer::Sequencer(AudioManager* audioManager, AudioMixer4& mixer1, AudioMixer
     lowTom = std::make_unique<DrumSoundTomLow>(3, mixer1);
     closedHiHat = std::make_unique<DrumSoundHihatClosed>(0, mixer2);
     openHiHat = std::make_unique<DrumSoundHihatOpen>(1, mixer2);
+    cymbal = std::make_unique<DrumSoundCymbal>(2, mixer2);
 
     // Create drum sequence distribution templates
     drumTemplates = std::make_unique<DrumTemplates>();
-
-    // create random beat using a distribution
-    newSequence();
 }
 
-void Sequencer::newSequence() {
+void Sequencer::newSequence(int templateIndex, int tomFillIndex) {
 
-    float busyness1and3 = 0.4 + (float)random(0, 20) / 100.0f;
-    float busynessXtra2 = 0.3 + (float)random(0, 20) / 100.0f;
-    float busynessXtra4 = 0.3 + (float)random(0, 20) / 100.0f;
+    currentTemplateIndex = templateIndex;
+    currentTomFillIndex = tomFillIndex;
 
-    int templateIndex = 0; // randomize when we have more templates
+    float busyness1and3 = 0.4 + randomFloat(0.0f, 0.2f);
+    float busynessXtra2 = 0.3 + randomFloat(0.0f, 0.2f);
+    float busynessXtra4 = 0.3 + randomFloat(0.0f, 0.2f);
 
     // Get template
     templateToUse = drumTemplates->getTemplateByIndex(templateIndex);
@@ -33,6 +32,9 @@ void Sequencer::newSequence() {
     snareVariable = templateToUse.snareVariable;
     closedHiHatVariable = templateToUse.closedHihatVariable;
     openHiHatVariable = templateToUse.openHihatVariable;
+
+    // Get tom fill
+    tomFillToUse = drumTemplates->getTomFillByIndex(tomFillIndex);
 
     // Get and set pattern and sequence lengths
     patternLength = templateToUse.patternLength;
@@ -81,17 +83,25 @@ void Sequencer::addAlwaysHits()
 {
     // Set always hits (adjusting for 0-based index)
     for (int step : templateToUse.kickAlways) {
-        patternSteps[0][step - 1] = 1;
+        patternSteps[0][step - 1] = 100;
     }
     for (int step : templateToUse.snareAlways) {
-        patternSteps[1][step - 1] = 1;
+        patternSteps[1][step - 1] = 100;
     }
     for (int step : templateToUse.closedHihatAlways) {
-        patternSteps[4][step - 1] = 1;
+        patternSteps[4][step - 1] = 100;
     }
     for (int step : templateToUse.openHihatAlways) {
-        patternSteps[5][step - 1] = 1;
-    } 
+        patternSteps[5][step - 1] = 100;
+    }
+
+    // Tom fill
+    for (int step : tomFillToUse.highTom) {
+        patternSteps[2][(patternLength - 8) + step - 1] = 100;
+    }
+    for (int step : tomFillToUse.lowTom) {
+        patternSteps[3][(patternLength - 8) + step - 1] = 100;
+    }
 }
 
 void Sequencer::addVariableHits()
@@ -180,13 +190,31 @@ void Sequencer::nextStep() {
         Serial.println(currentStep);
     }
     
-    if (sequenceSteps[0][currentStep] > 0) kick->trigger(sequenceSteps[0][currentStep]);                                    // Kick    
+    // Main beat
+    if (sequenceSteps[0][currentStep] > 0) kick->trigger(sequenceSteps[0][currentStep]);                                    // Kick
     if (sequenceSteps[1][currentStep] > 0) snare->trigger(sequenceSteps[1][currentStep]);                                   // Snare
-    if (sequenceSteps[2][currentStep] > 0) highTom->trigger(sequenceSteps[1][currentStep]);                                 // High Tom
-    if (sequenceSteps[3][currentStep] > 0) lowTom->trigger(sequenceSteps[1][currentStep]);                                  // Low Tom
     if (sequenceSteps[5][currentStep] > 0) openHiHat->trigger(sequenceSteps[1][currentStep]);                               // Open Hihat
     else if (sequenceSteps[4][currentStep] > 0) { closedHiHat->trigger(sequenceSteps[1][currentStep]); openHiHat->choke();} // Closed Hihat - Only play if no Open Hihat. Choke previous Open Hihat.
 
+    // Change
+    if (shouldChange)
+    {
+        if (currentPattern == (patternsBetweenChanges - 1))
+        {
+            if (sequenceSteps[2][currentStep] > 0) highTom->trigger(sequenceSteps[1][currentStep]);     // High Tom
+            if (sequenceSteps[3][currentStep] > 0) lowTom->trigger(sequenceSteps[1][currentStep]);      // Low Tom
+        }
+        if (currentPattern == 0 && currentStep == 0) cymbal->trigger(100);                              // Cymbal
+
+        // New variation on break
+        if (currentPattern == (patternsBetweenChanges - 1) && currentStep == (sequenceLength - 1))
+        {
+            uint32_t seedForRandomSeed = millis();
+            randomSeed(seedForRandomSeed);
+            int tomFillIndex = random(0, drumTemplates->getMaxTomFillIndex() + 1); // get random tom fill
+            newSequence(currentTemplateIndex, tomFillIndex);  // Use same template and new fill
+        }
+    }
     currentStep = (currentStep + 1) % sequenceLength;
 }
 
@@ -198,6 +226,7 @@ void Sequencer::update(int deltaTime)
     lowTom->update(deltaTime);
     closedHiHat->update(deltaTime);
     openHiHat->update(deltaTime);
+    cymbal->update(deltaTime);
 }
 
 int Sequencer::readCurrentStep()
@@ -216,5 +245,39 @@ void Sequencer::newDrums() {
     snare->newDrum();
     closedHiHat->newDrum();
     openHiHat->newDrum();
+    cymbal->newDrum();
+}
 
+float Sequencer::randomFloat(float min = 0.0f, float max = 1.0f)
+{
+    // Use 3 decimals
+    uint32_t randomInt = random(0, 1000);
+
+    // Convert to a float in [0, 1) range.
+
+    float randFloat = min + (static_cast<float>(randomInt) / 1000.0f) * (max - min);  // Scale and shift
+    return randFloat;
+}
+
+void Sequencer::incrementCurrentPattern()
+{
+    currentPattern = (currentPattern + 1) % patternsBetweenChanges;
+
+    if (debugMode)
+    {
+        Serial.print("Current pattern: ");
+        Serial.println(currentPattern);
+    }
+}
+
+DrumTemplates* Sequencer::getDrumTemplates()
+{
+    return drumTemplates.get();
+}
+
+void Sequencer::setShouldChange(bool newShouldChange)
+{
+    shouldChange = newShouldChange;
+    Serial.print("Change: ");
+    Serial.println(shouldChange);
 }

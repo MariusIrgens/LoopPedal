@@ -20,6 +20,7 @@
 #include "DrumSoundTomLow.h"
 #include "DrumSoundHihatClosed.h"
 #include "DrumSoundHihatOpen.h"
+#include "DrumSoundCymbal.h"
 #include "DrumTemplates.h"
 
 enum class DrumType { Kick, Snare, LowTom, HighTom, ClosedHiHat, OpenHiHat, Cymbal };
@@ -29,12 +30,16 @@ class AudioManager;
 class Sequencer {
 public:
     Sequencer(AudioManager* audioManager, AudioMixer4& mixer1, AudioMixer4& mixer2);
-    void newSequence();
+    void newSequence(int templateIndex, int tomFillIndex);
     void newDrums();
     void nextStep();
     void update(int deltaTime);
     int readCurrentStep();
     int getPatternLength();
+    float randomFloat(float min, float max);
+    void incrementCurrentPattern();
+    DrumTemplates* getDrumTemplates();
+    void setShouldChange(bool newShouldChange);
 
     std::unique_ptr<DrumSound> kick;
     std::unique_ptr<DrumSound> snare;
@@ -54,6 +59,9 @@ private:
 
     std::unique_ptr<DrumTemplates> drumTemplates;
     DrumTemplates::Template templateToUse;
+    DrumTemplates::TomFill tomFillToUse;
+    int currentTemplateIndex = 0;
+    int currentTomFillIndex = 0;
     std::vector<int> kickVariable;
     std::vector<int> snareVariable;
     std::vector<int> closedHiHatVariable;
@@ -65,10 +73,12 @@ private:
     std::vector<std::vector<int>> sequenceSteps;
     std::vector<std::vector<int>> patternSteps;
 
-
     bool debugMode = false;
     int currentStep = 0;
     int timeSign = 4;
+    int currentPattern = 0;
+    int patternsBetweenChanges = 8; // Randomize? 8 or 16 or 32...
+    bool shouldChange;
 
     AudioManager* audioManagerRef;
 };

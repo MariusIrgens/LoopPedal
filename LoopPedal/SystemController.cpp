@@ -53,7 +53,7 @@ void SystemController::blinkLED(int state)
 		break;
 	case 1:
 		// Sequence start
-		interactionManager->blinkLED(0, LEDSTRENGTH, LEDSTRENGTH);
+		interactionManager->blinkLED(LEDSTRENGTH, LEDSTRENGTH, LEDSTRENGTH);
 		break;
 	case 2:
 		// Major beats
@@ -93,4 +93,12 @@ void SystemController::incrementBPM(int amount)
 	audioManager->setCurrentBPM(currentBPM);
 	uint32_t newSixteenthNote = audioManager->generateSixteenthFromBPM(currentBPM);
 	audioManager->setDrumTimerInterval(newSixteenthNote);
+}
+
+void SystemController::shouldChange(bool shouldChange)
+{
+	if (shouldChange)
+		audioManager->getSequencer()->setShouldChange(true);
+	else
+		audioManager->getSequencer()->setShouldChange(false);
 }

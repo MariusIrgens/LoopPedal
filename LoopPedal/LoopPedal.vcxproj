@@ -82,6 +82,7 @@
   <ItemGroup>
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="DrumSound.cpp" />
+    <ClCompile Include="DrumSoundCymbal.cpp" />
     <ClCompile Include="DrumSoundHihatClosed.cpp" />
     <ClCompile Include="DrumSoundHihatOpen.cpp" />
     <ClCompile Include="DrumSoundKick.cpp" />
@@ -109,6 +110,7 @@
   <ItemGroup>
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="DrumSound.h" />
+    <ClInclude Include="DrumSoundCymbal.h" />
     <ClInclude Include="DrumSoundHihatClosed.h" />
     <ClInclude Include="DrumSoundHihatOpen.h" />
     <ClInclude Include="DrumSoundKick.h" />

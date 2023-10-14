@@ -25,7 +25,7 @@ void DrumSoundHihatOpen::trigger(int velocity) {
     envelopeNoiseFilterFreq->start();
 
     if (debugMode) {
-        //Serial.print("Hihat sound");
+        Serial.println("Open hihat sound");
     }
 }
 

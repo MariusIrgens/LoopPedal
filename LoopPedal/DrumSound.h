@@ -23,7 +23,7 @@ public:
     virtual float randomFloat(float min, float max);
 
 protected:
-    bool debugMode = true;
+    bool debugMode = false;
 };
 
 #endif

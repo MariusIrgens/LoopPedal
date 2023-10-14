@@ -25,6 +25,10 @@ void DrumSoundTomHigh::trigger(int velocity)
     envelopes_restarted = true;
     envelopeTriangleOscAmplitude->start();
     envelopeTriangleOscFreq->start();
+
+    if (debugMode) {
+        Serial.println("High tom sound");
+    }
 }
 
 void DrumSoundTomHigh::update(int deltaTime)

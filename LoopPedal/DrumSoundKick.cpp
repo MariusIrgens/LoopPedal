@@ -38,7 +38,7 @@ void DrumSoundKick::trigger(int velocity) {
     envelopeNoiseAmplitude->start();
 
     if (debugMode) {
-        //Serial.print("is Active");
+        Serial.println("Kick sound");
     }
 }
 

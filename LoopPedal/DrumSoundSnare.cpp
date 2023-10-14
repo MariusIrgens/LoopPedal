@@ -33,7 +33,7 @@ void DrumSoundSnare::trigger(int velocity) {
     envelopeTriangleOscFreq->start();
 
     if (debugMode) {
-        //Serial.print("Snare sound");
+        Serial.println("Snare sound");
     }
 }
 
