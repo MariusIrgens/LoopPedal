@@ -22,16 +22,8 @@ void Sequencer::newSequence(int templateIndex, int tomFillIndex) {
     currentTemplateIndex = templateIndex;
     currentTomFillIndex = tomFillIndex;
 
-    float busyness1and3 = 0.4 + randomFloat(0.0f, 0.2f);
-    float busynessXtra2 = 0.3 + randomFloat(0.0f, 0.2f);
-    float busynessXtra4 = 0.3 + randomFloat(0.0f, 0.2f);
-
     // Get template
     templateToUse = drumTemplates->getTemplateByIndex(templateIndex);
-    kickVariable = templateToUse.kickVariable;
-    snareVariable = templateToUse.snareVariable;
-    closedHiHatVariable = templateToUse.closedHihatVariable;
-    openHiHatVariable = templateToUse.openHihatVariable;
 
     // Get tom fill
     tomFillToUse = drumTemplates->getTomFillByIndex(tomFillIndex);
@@ -53,17 +45,17 @@ void Sequencer::newSequence(int templateIndex, int tomFillIndex) {
     // CREATE SEQUENCE
     
     // Pattern 1 and 3 is normal
-    busyness = busyness1and3;
+    globalBusynessModifier = 1.0;
     addAlwaysHits();
     addVariableHits();
     pastePatternToSequence(0);
     pastePatternToSequence(templateToUse.patternLength * 2);
     // Pattern 2 adds hits
-    busyness = busynessXtra2;
+    globalBusynessModifier = 1.0;
     addVariableHits();
     pastePatternToSequence(templateToUse.patternLength);
     // Pattern 4 adds even more hits
-    busyness = busynessXtra4;
+    globalBusynessModifier = 1.0;
     addVariableHits();
     pastePatternToSequence(templateToUse.patternLength * 3);
 }
@@ -117,6 +109,7 @@ void Sequencer::populateVariableHits(std::vector<int>& drumPattern, DrumType dru
 {
     int hitNumber = 1;
     int hitVelocity = 1;
+    float currentBusyness = 0.5;
     std::string drumString;
     std::vector<int>* distribution = nullptr;
 
@@ -124,19 +117,23 @@ void Sequencer::populateVariableHits(std::vector<int>& drumPattern, DrumType dru
     switch (drumType)
     {
     case DrumType::Kick:
-        distribution = &kickVariable;
+        distribution = &templateToUse.kickVariable;
+        currentBusyness = templateToUse.kickBusyness;
         drumString = "kick";
         break;
     case DrumType::Snare:
-        distribution = &snareVariable;
+        distribution = &templateToUse.snareVariable;
+        currentBusyness = templateToUse.snareBusyness;
         drumString = "snare";
         break;
     case DrumType::ClosedHiHat:
-        distribution = &closedHiHatVariable;
+        distribution = &templateToUse.closedHihatVariable;
+        currentBusyness = templateToUse.closedHihatBusyness;
         drumString = "closed hihat";
         break;
     case DrumType::OpenHiHat:
-        distribution = &openHiHatVariable;
+        distribution = &templateToUse.openHihatVariable;
+        currentBusyness = templateToUse.openHihatBusyness;
         drumString = "open hihat";
         break;
     default:
@@ -146,21 +143,11 @@ void Sequencer::populateVariableHits(std::vector<int>& drumPattern, DrumType dru
     // calculate the contributing factor - higher if there are more hits in the distribution
     int contribution = (int)( ((float)distribution->size() / (float)templateToUse.maxArraySize) * 100.0f );
 
-    //if (debugMode) {
-    //    std::string message = "contribution " + drumString + ": " + std::to_string(contribution);
-    //    Serial.println(message.c_str());
-    //}
-
-    while (!distribution->empty() && oneMoreHit(hitNumber, contribution))
+    while (!distribution->empty() && oneMoreHit(hitNumber, contribution, currentBusyness))
     {
         int randomValue = random(distribution->size());
         int hitPlacement = (*distribution)[randomValue];
-        drumPattern[hitPlacement] = hitVelocity;
-
-        //if (debugMode) {
-        //    std::string message = "Added random hit to " + drumString + " at " + std::to_string(hitPlacement);
-        //    Serial.println(message.c_str());
-        //}
+        drumPattern[hitPlacement - 1] = hitVelocity;
 
         // Remove all instances of the used element from the distribution copy
         distribution->erase(std::remove(distribution->begin(), distribution->end(), hitPlacement), distribution->end());
@@ -168,12 +155,12 @@ void Sequencer::populateVariableHits(std::vector<int>& drumPattern, DrumType dru
     }
 }
 
-bool Sequencer::oneMoreHit(int hitNumber, int contribution)
+bool Sequencer::oneMoreHit(int hitNumber, int contribution, float busyness)
 {
     int chance = 100 + contribution;
     for (int i = 1; i <= hitNumber; i++)
     {
-        chance *= busyness;
+        chance *= (busyness * globalBusynessModifier);
     }
 
     int randomValue = random(0, 100);
@@ -273,6 +260,11 @@ void Sequencer::incrementCurrentPattern()
 DrumTemplates* Sequencer::getDrumTemplates()
 {
     return drumTemplates.get();
+}
+
+DrumTemplates::Template* Sequencer::getCurrentDrumTemplate()
+{
+    return &templateToUse;
 }
 
 void Sequencer::setShouldChange(bool newShouldChange)

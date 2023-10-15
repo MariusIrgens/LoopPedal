@@ -185,22 +185,25 @@ void AudioManager::newSequence()
     }
     else
     {
-        Serial.println("New sequence!");
-
         // Seed the random number generator
         uint32_t seedForRandomSeed = millis();
         randomSeed(seedForRandomSeed);
 
         // Generate new sequence
         int tomFillIndex = random(0, sequencer->getDrumTemplates()->getMaxTomFillIndex() + 1); // get random tom fill
-        sequencer->newSequence(1, tomFillIndex);
+        //int templateIndex = 12; // use random when finished
+        int templateIndex = random(0, sequencer->getDrumTemplates()->getMaxTemplateIndex() + 1); // get random drum template
+        sequencer->newSequence(templateIndex, tomFillIndex);
 
         // Generate new drums
         sequencer->newDrums();
 
-        // Set new tempo
-        currentBPM = random(70, 140);
+        // Set new tempo (set template first!)
+        currentBPM = random(sequencer->getCurrentDrumTemplate()->minBPM, sequencer->getCurrentDrumTemplate()->maxBPM);
         setDrumTimerInterval(generateSixteenthFromBPM(currentBPM));
+        Serial.print("New sequence: ");
+        Serial.println(sequencer->getCurrentDrumTemplate()->name.c_str());
+
     }
 }
 

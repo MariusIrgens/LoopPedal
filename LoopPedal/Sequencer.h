@@ -39,6 +39,7 @@ public:
     float randomFloat(float min, float max);
     void incrementCurrentPattern();
     DrumTemplates* getDrumTemplates();
+    DrumTemplates::Template* getCurrentDrumTemplate();
     void setShouldChange(bool newShouldChange);
 
     std::unique_ptr<DrumSound> kick;
@@ -51,7 +52,7 @@ public:
     std::unique_ptr<DrumSound> cymbal;
 
 private:
-    bool oneMoreHit(int hitNumber, int contribution);
+    bool oneMoreHit(int hitNumber, int contribution, float busyness);
     void pastePatternToSequence(int sequenceStart);
     void addAlwaysHits();
     void addVariableHits();
@@ -62,11 +63,7 @@ private:
     DrumTemplates::TomFill tomFillToUse;
     int currentTemplateIndex = 0;
     int currentTomFillIndex = 0;
-    std::vector<int> kickVariable;
-    std::vector<int> snareVariable;
-    std::vector<int> closedHiHatVariable;
-    std::vector<int> openHiHatVariable;
-    float busyness = 0.5;
+    int globalBusynessModifier = 1.0;
 
     int sequenceLength;
     int patternLength;
@@ -78,7 +75,7 @@ private:
     int timeSign = 4;
     int currentPattern = 0;
     int patternsBetweenChanges = 8; // Randomize? 8 or 16 or 32...
-    bool shouldChange;
+    bool shouldChange = true;
 
     AudioManager* audioManagerRef;
 };

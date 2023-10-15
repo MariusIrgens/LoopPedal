@@ -26,6 +26,12 @@ public:
         std::vector<int> snareVariable;
         std::vector<int> kickAlways;
         std::vector<int> kickVariable;
+        float openHihatBusyness = 0.4;
+        float closedHihatBusyness = 0.4;
+        float snareBusyness = 0.4;
+        float kickBusyness = 0.4;
+        int maxBPM = 140;
+        int minBPM = 70;
     };
     
     struct TomFill {
