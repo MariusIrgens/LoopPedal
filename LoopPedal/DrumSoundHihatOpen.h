@@ -29,11 +29,13 @@ private:
 	AudioFilterStateVariable noiseFilter;
 	AudioFilterStateVariable EQFilter;
 	AudioMixer4 oscMixer;
+	AudioEffectBitcrusher bitCrusher;
 
 	// Patchings
 	std::unique_ptr<AudioConnection> patchCordNoise_Filter;
 	std::unique_ptr<AudioConnection> patchCordFilter_Mix;
-	std::unique_ptr<AudioConnection> patchCordMix_EQ;
+	std::unique_ptr<AudioConnection> patchCordMix_Bit;
+	std::unique_ptr<AudioConnection> patchCordBit_EQ;
 	std::unique_ptr<AudioConnection> patchCordEQ_Out;
 
 	// Envelopes

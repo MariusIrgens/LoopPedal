@@ -5,7 +5,8 @@ DrumSoundHihatOpen::DrumSoundHihatOpen(int mixerChannel, AudioMixer4& mixer)
 {
     patchCordNoise_Filter = std::make_unique<AudioConnection>(noise, 0, noiseFilter, 0);
     patchCordFilter_Mix = std::make_unique<AudioConnection>(noiseFilter, 0, oscMixer, 0);
-    patchCordMix_EQ = std::make_unique<AudioConnection>(oscMixer, 0, EQFilter, 0);
+    patchCordMix_Bit = std::make_unique<AudioConnection>(oscMixer, 0, bitCrusher, 0);
+    patchCordBit_EQ = std::make_unique<AudioConnection>(bitCrusher, 0, EQFilter, 0);
     patchCordEQ_Out = std::make_unique<AudioConnection>(EQFilter, 2, mixer, mixerChannel);
 
     // Set all base values
@@ -13,6 +14,8 @@ DrumSoundHihatOpen::DrumSoundHihatOpen(int mixerChannel, AudioMixer4& mixer)
     oscMixer.gain(1, 0.0f);
     oscMixer.gain(2, 0.0f);
     oscMixer.gain(3, 0.0f);
+    bitCrusher.bits(16);
+    bitCrusher.sampleRate(44100);
 
     newDrum();
 
@@ -68,6 +71,10 @@ void DrumSoundHihatOpen::newDrum()
 
     // High Pass Filter
     EQFilter.frequency(randomFloat(0.75f, 1.0f) * 3500.0f);
+
+    // FX
+    bitCrusher.bits(random(2, 16));
+    bitCrusher.sampleRate(random(2756, 44100));
 
     envelopeNoiseAmplitude = std::make_unique<Envelope>(maxAmplitudeNoise, minAmplitudeNoise, attackTimeAmplitudeNoise, decayTimeAmplitudeNoise, curvednessAmplitudeNoise);
     envelopeNoiseFilterFreq = std::make_unique<Envelope>(maxFilterFreqNoise, minFilterFreqNoise, attackTimeFilterFreqNoise, decayTimeFilterFreqNoise, curvednessFilterFreqNoise);

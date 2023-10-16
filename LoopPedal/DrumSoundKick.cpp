@@ -8,7 +8,8 @@ DrumSoundKick::DrumSoundKick(int mixerChannel, AudioMixer4& mixer)
     patchCordClick_Mix = std::make_unique<AudioConnection>(clickOsc, 0, oscMixer, 1);
     patchCordNoise_Filter = std::make_unique<AudioConnection>(noise, 0, noiseFilter, 0);
     patchCordFilter_Mix = std::make_unique<AudioConnection>(noiseFilter, 0, oscMixer, 2);
-    patchCordMix_Out = std::make_unique<AudioConnection>(oscMixer, 0, mixer, mixerChannel);
+    patchCordMix_Bit = std::make_unique<AudioConnection>(oscMixer, 0, bitCrusher, 0);
+    patchCordBit_Out = std::make_unique<AudioConnection>(bitCrusher, 0, mixer, mixerChannel);
 
     // Set all base values
     oscMixer.gain(0, 1.0f);
@@ -21,12 +22,14 @@ DrumSoundKick::DrumSoundKick(int mixerChannel, AudioMixer4& mixer)
     clickOsc.amplitude(0.0f);
     noiseFilter.frequency(noiseFilterFrequency);
     noise.amplitude(0.0f);
+    bitCrusher.bits(16);
+    bitCrusher.sampleRate(44100);
 
     newDrum();
 }
 
 void DrumSoundKick::trigger(int velocity) {
-    // Set all velocity sensitive parameters
+    // Set all velocity sensitive parameters    
     //envelopeSineFrequency.setCurvedness(float(velocity) / 10.0f);
 
     // Start all envelopes
@@ -82,13 +85,13 @@ void DrumSoundKick::newDrum()
     maxAmplitudeSine = randomFloat(0.7f, 1.0f);
     minAmplitudeSine = 0.0f;
     attackTimeAmplitudeSine = randomFloat(0.5f, 1.0f) * 10.0f;
-    decayTimeAmplitudeSine = randomFloat(0.5f, 1.0f) * 500.0f;
+    decayTimeAmplitudeSine = randomFloat(0.2f, 1.0f) * 800.0f;
     curvednessAmplitudeSine = randomFloat(0.1f, 0.5f);
 
     maxFrequencySine = randomFloat(0.75f, 1.0f) * 350.0f;
     minFrequencySine = randomFloat(0.25f, 1.0f) * 40.0f;
     attackTimeFrequencySine = randomFloat(0.5f, 1.0f) * 10.0f;
-    decayTimeFrequencySine = randomFloat(0.5f, 1.0f) * 300.0f;
+    decayTimeFrequencySine = randomFloat(0.2f, 1.0f) * 600.0f;
     curvednessFrequencySine = randomFloat(0.1f, 0.5f);
 
     // Click Oscillator
@@ -112,6 +115,10 @@ void DrumSoundKick::newDrum()
     curvednessAmplitudeNoise = randomFloat(0.1f, 0.5f);
 
     noiseFilterFrequency = randomFloat(0.5f, 1.0f) * 3000.0f;
+
+    // FX
+    bitCrusher.bits(random(4, 16));
+    bitCrusher.sampleRate(random(5512, 44100));
 
     // Redefine all envelopes
     envelopeSineAmplitude = std::make_unique<Envelope>(maxAmplitudeSine, minAmplitudeSine, attackTimeAmplitudeSine, decayTimeAmplitudeSine, curvednessAmplitudeSine);

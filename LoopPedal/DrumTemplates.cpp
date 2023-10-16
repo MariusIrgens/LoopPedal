@@ -275,6 +275,7 @@ DrumTemplates::DrumTemplates() {
 
     // 3/4
 
+    //13
     beat =
     {
         .name = "country waltz",
@@ -295,6 +296,7 @@ DrumTemplates::DrumTemplates() {
     };
     allTemplates.push_back(beat);
 
+    // 14
     beat =
     {
         .name = "bikutsi",
@@ -317,9 +319,11 @@ DrumTemplates::DrumTemplates() {
     allTemplates.push_back(beat);
 
     // 5/4
+
+    // 15
     beat =
     {
-        .name = "fivefour1",
+        .name = "fivefour - and3 5",
         .patternLength = 20,
         .maxArraySize = 60,
         .openHihatAlways = {},
@@ -330,10 +334,100 @@ DrumTemplates::DrumTemplates() {
         .snareVariable = {3,3,11,11,15,15},
         .kickAlways = {1,13},
         .kickVariable = {3,3,5,7,7,9,11,11,15,15,17,19,19},
+        .snareBusyness = 0.25,
+        .kickBusyness = 0.3,
+        .maxBPM = 140,
+        .minBPM = 100,
     };
     allTemplates.push_back(beat);
 
+    // 16
+    beat =
+    {
+        .name = "fivefour - 3 5",
+        .patternLength = 20,
+        .maxArraySize = 60,
+        .openHihatAlways = {},
+        .openHihatVariable = {1,1,1,3,3,3,5,5,5,7,7,7,9,9,9,11,11,11,13,13,13,15,15,15,17,17,17,19,19,19},
+        .closedHihatAlways = {1,5,9,13,17},
+        .closedHihatVariable = {2,2,3,3,3,4,6,6,7,7,7,8,10,10,11,11,11,12,14,14,15,15,15,16,18,18,19,19,19,20},
+        .snareAlways = {9,17},
+        .snareVariable = {5,19},
+        .kickAlways = {1,7,13},
+        .kickVariable = {3,19},
+        .closedHihatBusyness = 0.6,
+        .snareBusyness = 0.2,
+        .kickBusyness = 0.3,
+        .maxBPM = 140,
+        .minBPM = 100,
+    };
+    allTemplates.push_back(beat);
 
+    // 17
+    beat =
+    {
+        .name = "fivefour - 2 5",
+        .patternLength = 20,
+        .maxArraySize = 60,
+        .openHihatAlways = {},
+        .openHihatVariable = {1,1,1,3,5,5,5,7,9,9,9,11,13,13,13,15,17,17,17,19},
+        .closedHihatAlways = {1,5,9,13,17},
+        .closedHihatVariable = {2,3,3,3,4,6,7,7,7,8,10,11,11,11,12,14,15,15,15,16,18,19,19,19,20},
+        .snareAlways = {5,17},
+        .snareVariable = {13,19,19,19,20,20},
+        .kickAlways = {1,13},
+        .kickVariable = {7,7,11,11,11,15,15,15,19},
+        .closedHihatBusyness = 0.6,
+        .snareBusyness = 0.2,
+        .kickBusyness = 0.3,
+        .maxBPM = 140,
+        .minBPM = 100,
+    };
+    allTemplates.push_back(beat);
+
+    // 18
+    beat =
+    {
+        .name = "sevenfour - 3 6",
+        .patternLength = 28,
+        .maxArraySize = 84,
+        .openHihatAlways = {1},
+        .openHihatVariable = {3,5,5,5,7,9,9,9,11,13,13,13,15,17,17,17,19,21,21,21,23,25,25,25,27},
+        .closedHihatAlways = {5,9,13,17,21,25},
+        .closedHihatVariable = {2,3,3,3,4,6,7,7,7,8,10,11,11,11,12,14,15,15,15,16,18,19,19,19,20,22,23,23,23,24,26,27,27,27,28},
+        .snareAlways = {9,21},
+        .snareVariable = {3,15,15,15,25,25,27},
+        .kickAlways = {1,13,17},
+        .kickVariable = {7,7,7,25,25,25,27,27,27},
+        .closedHihatBusyness = 0.6,
+        .snareBusyness = 0.2,
+        .kickBusyness = 0.3,
+        .maxBPM = 150,
+        .minBPM = 115,
+    };
+    allTemplates.push_back(beat);
+
+    // 19
+    beat =
+    {
+        .name = "sevenfour - 2 4 6",
+        .patternLength = 28,
+        .maxArraySize = 84,
+        .openHihatAlways = {27},
+        .openHihatVariable = {3,3,3,5,7,7,7,9,11,11,11,13,15,15,15,17,19,19,19,21,23,23,23,25},
+        .closedHihatAlways = {1,5,9,13,17,21,25},
+        .closedHihatVariable = {3,3,3,7,7,7,11,11,11,15,15,15,19,19,19,23,23,23,27,27,27},
+        .snareAlways = {5,13,21},
+        .snareVariable = {15,23,27},
+        .kickAlways = {1,17},
+        .kickVariable = {7,7,7,9,9,9,11,11,11,23,23,23,25,25,25,27,27,27},
+        .closedHihatBusyness = 0.6,
+        .snareBusyness = 0.2,
+        .kickBusyness = 0.3,
+        .maxBPM = 140,
+        .minBPM = 100,
+    };
+    allTemplates.push_back(beat);
 
     // TOM FILLS
     // Always 2 beats long, for simplicity (8 steps)

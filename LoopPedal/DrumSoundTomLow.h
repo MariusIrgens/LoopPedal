@@ -19,15 +19,20 @@ public:
 	DrumSoundTomLow(int mixerChannel, AudioMixer4& mixer);
 	void trigger(int velocity) override;
 	void update(int deltaTime) override;
+	void choke() override;
+	void newDrum() override;
+
 
 private:
 	// Modules
 	AudioSynthWaveform triangleOsc;
 	AudioMixer4 oscMixer;
+	AudioEffectBitcrusher bitCrusher;
 
 	// Patching
 	std::unique_ptr<AudioConnection> patchCordTriangleOsc_Mix;
-	std::unique_ptr<AudioConnection> patchCordMix_Out;
+	std::unique_ptr<AudioConnection> patchCordMix_Bit;
+	std::unique_ptr<AudioConnection> patchCordBit_Out;
 
 	// Envelopes
 	bool envelopes_restarted = false;

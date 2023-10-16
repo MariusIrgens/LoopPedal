@@ -41,6 +41,7 @@ public:
     DrumTemplates* getDrumTemplates();
     DrumTemplates::Template* getCurrentDrumTemplate();
     void setShouldChange(bool newShouldChange);
+    void restartSequence();
 
     std::unique_ptr<DrumSound> kick;
     std::unique_ptr<DrumSound> snare;
@@ -76,6 +77,13 @@ private:
     int currentPattern = 0;
     int patternsBetweenChanges = 8; // Randomize? 8 or 16 or 32...
     bool shouldChange = true;
+    bool isMutePossible = true;
+    bool shouldMute = false;
+    int muteStartPart;
+    int muteStartBeat;
+    int muteBeatLength;
+    bool shouldMuteKick = false;
+    bool shouldMuteSnare = false;
 
     AudioManager* audioManagerRef;
 };

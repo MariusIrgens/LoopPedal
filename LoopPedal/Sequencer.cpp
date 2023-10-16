@@ -19,6 +19,13 @@ Sequencer::Sequencer(AudioManager* audioManager, AudioMixer4& mixer1, AudioMixer
 
 void Sequencer::newSequence(int templateIndex, int tomFillIndex) {
 
+    // Empty pattern and sequence
+    for (auto& step : patternSteps) {
+        std::fill(step.begin(), step.end(), 0);
+    }
+    for (auto& step : sequenceSteps) {
+        std::fill(step.begin(), step.end(), 0);
+    }
     currentTemplateIndex = templateIndex;
     currentTomFillIndex = tomFillIndex;
 
@@ -34,16 +41,9 @@ void Sequencer::newSequence(int templateIndex, int tomFillIndex) {
     sequenceLength = templateToUse.patternLength * 4;
     sequenceSteps.resize(8, std::vector<int>(sequenceLength, 0));
 
-    // Empty pattern and sequence
-    for (auto& step : patternSteps) {
-        std::fill(step.begin(), step.end(), 0);
-    }
-    for (auto& step : sequenceSteps) {
-        std::fill(step.begin(), step.end(), 0);
-    }
-
     // CREATE SEQUENCE
-    
+    Serial.println("Before");
+
     // Pattern 1 and 3 is normal
     globalBusynessModifier = 1.0;
     addAlwaysHits();
@@ -58,6 +58,8 @@ void Sequencer::newSequence(int templateIndex, int tomFillIndex) {
     globalBusynessModifier = 1.0;
     addVariableHits();
     pastePatternToSequence(templateToUse.patternLength * 3);
+    Serial.println("After");
+
 }
 
 void Sequencer::pastePatternToSequence(int sequenceStart)
@@ -173,16 +175,36 @@ bool Sequencer::oneMoreHit(int hitNumber, int contribution, float busyness)
 void Sequencer::nextStep() {
 
     if (debugMode) {
-        Serial.print("Current Step: ");
-        Serial.println(currentStep);
+        //Serial.print("Current Step: ");
+        //Serial.println(currentStep);
+    }
+
+    // Mute check
+    int currentPart = currentPattern / (patternsBetweenChanges / 2);
+    int currentStepModded = max((currentStep - 1), 0);
+    int currentBeat = (currentStepModded / 4);
+    if (isMutePossible && shouldMute && (currentPart == muteStartPart) && (currentBeat >= muteStartBeat) && (currentBeat < (muteStartBeat + muteBeatLength)))
+    {
+        if (debugMode)
+        {
+            Serial.print("Mute at part: ");
+            Serial.print(muteStartPart);
+            Serial.print(", beat: ");
+            Serial.print(muteStartBeat);
+            Serial.print(", with length: ");
+            Serial.println(muteBeatLength);
+        }
+    }
+    else
+    {
+        // Main beat
+        if (!shouldMuteKick && sequenceSteps[0][currentStep] > 0) kick->trigger(sequenceSteps[0][currentStep]);                                    // Kick
+        if (!shouldMuteSnare && sequenceSteps[1][currentStep] > 0) snare->trigger(sequenceSteps[1][currentStep]);                                   // Snare
+        if (sequenceSteps[5][currentStep] > 0) openHiHat->trigger(sequenceSteps[1][currentStep]);                               // Open Hihat
+        else if (sequenceSteps[4][currentStep] > 0) { closedHiHat->trigger(sequenceSteps[1][currentStep]); openHiHat->choke(); } // Closed Hihat - Only play if no Open Hihat. Choke previous Open Hihat.
+
     }
     
-    // Main beat
-    if (sequenceSteps[0][currentStep] > 0) kick->trigger(sequenceSteps[0][currentStep]);                                    // Kick
-    if (sequenceSteps[1][currentStep] > 0) snare->trigger(sequenceSteps[1][currentStep]);                                   // Snare
-    if (sequenceSteps[5][currentStep] > 0) openHiHat->trigger(sequenceSteps[1][currentStep]);                               // Open Hihat
-    else if (sequenceSteps[4][currentStep] > 0) { closedHiHat->trigger(sequenceSteps[1][currentStep]); openHiHat->choke();} // Closed Hihat - Only play if no Open Hihat. Choke previous Open Hihat.
-
     // Change
     if (shouldChange)
     {
@@ -200,6 +222,46 @@ void Sequencer::nextStep() {
             randomSeed(seedForRandomSeed);
             int tomFillIndex = random(0, drumTemplates->getMaxTomFillIndex() + 1); // get random tom fill
             newSequence(currentTemplateIndex, tomFillIndex);  // Use same template and new fill
+            highTom->newDrum();
+            lowTom->newDrum();
+
+            int shouldMuteCheck = random(0, 100);
+            if (shouldMuteCheck >= 75)
+            {
+                shouldMute = true;
+                muteStartPart = random(0, 2);
+                muteStartBeat = random(0, sequenceLength / 4);
+                muteBeatLength = random(1, patternLength / 4);
+                if (debugMode)
+                {
+                    Serial.print("Should mute at part: ");
+                    Serial.print(muteStartPart);
+                    Serial.print(", beat: ");
+                    Serial.print(muteStartBeat);
+                    Serial.print(", with length: ");
+                    Serial.println(muteBeatLength);
+                }
+            }
+            else
+            { 
+                shouldMute = false;
+                if(debugMode)
+                    Serial.println("No mute this round");
+            }
+
+            // Mute Kick 
+            int shouldMuteKickCheck = random(0, 100);
+            if (shouldMuteKickCheck >= 92)
+                shouldMuteKick = true;
+            else
+                shouldMuteKick = false;
+
+            // Mute Snare
+            int shouldMuteSnareCheck = random(0, 100);
+            if (shouldMuteKickCheck >= 92)
+                shouldMuteSnare = true;
+            else
+                shouldMuteSnare = false;
         }
     }
     currentStep = (currentStep + 1) % sequenceLength;
@@ -233,6 +295,8 @@ void Sequencer::newDrums() {
     closedHiHat->newDrum();
     openHiHat->newDrum();
     cymbal->newDrum();
+    highTom->newDrum();
+    lowTom->newDrum();
 }
 
 float Sequencer::randomFloat(float min = 0.0f, float max = 1.0f)
@@ -272,4 +336,10 @@ void Sequencer::setShouldChange(bool newShouldChange)
     shouldChange = newShouldChange;
     Serial.print("Change: ");
     Serial.println(shouldChange);
+}
+
+void Sequencer::restartSequence()
+{
+    currentStep = 0;
+    currentPattern = 0;
 }

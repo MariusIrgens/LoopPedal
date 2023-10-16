@@ -265,8 +265,8 @@ void Looper::startPlaying()
     stopPlaying();
 
     timesLooped++;
-    std::string message = "Play loop " + std::to_string(timesLooped);
-    Serial.println(message.c_str());
+    //std::string message = "Play loop " + std::to_string(timesLooped);
+    //Serial.println(message.c_str());
 
     playRaw1.play(primaryFile.c_str()); // Play the primaryFile
 }

@@ -88,8 +88,8 @@ void AudioManager::setup()
     newSequence();
 }
 
-void AudioManager::stepUpdate() {
-
+void AudioManager::stepUpdate() 
+{
     // Advance sequencer with a 16th step
     instance->sequencer->nextStep();
 
@@ -190,9 +190,9 @@ void AudioManager::newSequence()
         randomSeed(seedForRandomSeed);
 
         // Generate new sequence
-        int tomFillIndex = random(0, sequencer->getDrumTemplates()->getMaxTomFillIndex() + 1); // get random tom fill
-        //int templateIndex = 12; // use random when finished
-        int templateIndex = random(0, sequencer->getDrumTemplates()->getMaxTemplateIndex() + 1); // get random drum template
+        int tomFillIndex = random(0, sequencer->getDrumTemplates()->getMaxTomFillIndex()); // get random tom fill
+        //int templateIndex = 0; // use random when finished
+        int templateIndex = random(0, sequencer->getDrumTemplates()->getMaxTemplateIndex()); // get random drum template
         sequencer->newSequence(templateIndex, tomFillIndex);
 
         // Generate new drums
@@ -204,6 +204,7 @@ void AudioManager::newSequence()
         Serial.print("New sequence: ");
         Serial.println(sequencer->getCurrentDrumTemplate()->name.c_str());
 
+        sequencer->restartSequence();
     }
 }
 

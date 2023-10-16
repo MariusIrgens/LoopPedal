@@ -29,13 +29,14 @@ private:
 	AudioSynthNoiseWhite noise;
 	AudioFilterStateVariable noiseFilter;
 	AudioMixer4 oscMixer;
-
+	AudioEffectBitcrusher bitCrusher;
 
 	// Patchings
 	std::unique_ptr<AudioConnection> patchCordNoise_Filter;
 	std::unique_ptr<AudioConnection> patchCordFilter_Mix;
 	std::unique_ptr<AudioConnection> patchCordTriangleOsc_Mix;
-	std::unique_ptr<AudioConnection> patchCordMix_Out;
+	std::unique_ptr<AudioConnection> patchCordMix_Bit;
+	std::unique_ptr<AudioConnection> patchCordBit_Out;
 
 	std::unique_ptr<AudioConnection> patchCordTriangleMod_TriangleOsc;
 

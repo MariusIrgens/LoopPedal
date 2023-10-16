@@ -19,15 +19,20 @@ public:
 	DrumSoundTomHigh(int mixerChannel, AudioMixer4& mixer);
 	void trigger(int velocity) override;
 	void update(int deltaTime) override;
+	void choke() override;
+	void newDrum() override;
+
 
 private:
 	// Modules
 	AudioSynthWaveform triangleOsc;
 	AudioMixer4 oscMixer;
+	AudioEffectBitcrusher bitCrusher;
 
 	// Patching
 	std::unique_ptr<AudioConnection> patchCordTriangleOsc_Mix;
-	std::unique_ptr<AudioConnection> patchCordMix_Out;
+	std::unique_ptr<AudioConnection> patchCordMix_Bit;
+	std::unique_ptr<AudioConnection> patchCordBit_Out;
 
 	// Envelopes
 	bool envelopes_restarted = false;
@@ -42,13 +47,11 @@ private:
 	float decayTimeAmplitudeTriangleOsc = 250.0f;
 	float curvednessAmplitudeTriangleOsc = 0.2f;
 
-	float maxFreqTriangleOsc = 800.0;
+	float maxFreqTriangleOsc = 800.0f;
 	float minFreqTriangleOsc = 400.0f;
 	float attackTimeFreqTriangleOsc = 5.0f;
 	float decayTimeFreqTriangleOsc = 350.0f;
 	float curvednessFreqTriangleOsc = 0.7f;
-
-
 };
 
 #endif

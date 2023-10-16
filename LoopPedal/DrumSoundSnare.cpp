@@ -7,7 +7,8 @@ DrumSoundSnare::DrumSoundSnare(int mixerChannel, AudioMixer4& mixer)
     patchCordNoise_Filter = std::make_unique<AudioConnection>(noise, 0, noiseFilter, 0);
     patchCordFilter_Mix = std::make_unique<AudioConnection>(noiseFilter, 0, oscMixer, 0);
     patchCordTriangleOsc_Mix = std::make_unique<AudioConnection>(triangleOsc, 0, oscMixer, 1);
-    patchCordMix_Out = std::make_unique<AudioConnection>(oscMixer, 0, mixer, mixerChannel);
+    patchCordMix_Bit = std::make_unique<AudioConnection>(oscMixer, 0, bitCrusher, 0);
+    patchCordBit_Out = std::make_unique<AudioConnection>(bitCrusher, 0, mixer, mixerChannel);
 
     patchCordTriangleMod_TriangleOsc = std::make_unique<AudioConnection>(triangleMod, 0, triangleOsc, 0);
 
@@ -19,6 +20,8 @@ DrumSoundSnare::DrumSoundSnare(int mixerChannel, AudioMixer4& mixer)
     triangleOsc.begin(3);
     triangleOsc.amplitude(0.0);
     triangleOsc.frequency(maxFreqTriangleOsc);
+    bitCrusher.bits(16);
+    bitCrusher.sampleRate(44100);
 
     newDrum();
 
@@ -96,6 +99,10 @@ void DrumSoundSnare::newDrum()
 
     // Triangle Modulation
     triangleMod.begin(randomFloat(0.0f, 0.1f), randomFloat(0.0f, 1.0f) * 500.0f, random(0, 8));
+
+    // FX
+    bitCrusher.bits(random(8, 16));
+    bitCrusher.sampleRate(random(11025, 44100));
 
     // Redefine all envelopes
     envelopeNoiseAmplitude = std::make_unique<Envelope>(maxAmplitudeNoise, minAmplitudeNoise, attackTimeAmplitudeNoise, decayTimeAmplitudeNoise, curvednessAmplitudeNoise);
