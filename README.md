@@ -59,7 +59,7 @@ Each drum sound consist of a number of oscillators that are automated with a cus
 # Looper
 https://github.com/MariusIrgens/LoopPedal/blob/a50a74c27e1bdc3f48690f88fd667be2349ab218/LoopPedal/Looper.cpp
 
-The looper is pretty basic: if record is triggered (left footswitch), it will start recording on the start of the next bar. If record is triggered again, it will stop recording on the start of the next bar. The loop length can not exceed 4 bars at the moment, but this might change in future updates. A recorded loop will start playing after recording has been stopped, and will continue to play until deleted (right footswitch). I wanted to be able to record loops on top of eachother, but since the SD card can not be read from and written to simultaneously, this unfortunately could not be implemented. If anyone knows how to fix this, please let me know.
+The looper is pretty basic: if record is triggered (left footswitch), it will start recording on the start of the next bar. If record is triggered again, it will stop recording on the start of the next bar. The loop length can not exceed 4 bars at the moment, but this might change in future updates. A recorded loop will start playing after recording has been stopped, and will continue to play until deleted (right footswitch). I wanted to be able to record multiple loops on top of eachother, but since the SD card can not be read from and written to simultaneously, this unfortunately could not be implemented. If anyone knows how to fix this, please let me know.
 
 # Interaction
 https://github.com/MariusIrgens/LoopPedal/blob/a50a74c27e1bdc3f48690f88fd667be2349ab218/LoopPedal/InteractionManager.cpp
