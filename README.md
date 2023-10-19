@@ -40,11 +40,14 @@ https://github.com/MariusIrgens/LoopPedal/blob/a50a74c27e1bdc3f48690f88fd667be23
 
 To make a new template entry, copy the output from the template generator and make a new entry in the drumTemplates.cpp constructor. If needed, override the busyness values and BPM values. Then, push the new template to the allTemplates vector. A template is chosen at random from the list when “new sequence” is run (right footswitch).
 
-https://github.com/MariusIrgens/LoopPedal/blob/a50a74c27e1bdc3f48690f88fd667be2349ab218/LoopPedal/Sequencer.cpp#L145-L158
+In the sequence generator, “always” hits are added instantly. Afterwards, extra hits are picked from the variable arrays in the following way:
+
 https://github.com/MariusIrgens/LoopPedal/blob/a50a74c27e1bdc3f48690f88fd667be2349ab218/LoopPedal/Sequencer.cpp#L160-L173
 
-In the sequence generator, “always” hits are added instantly. Afterwards, extra hits are picked from the variable arrays in the following way:
-- Should one more hit be added? A “oneMoreHit” function runs to check if one more hit should be added. This uses the “busyness” variable to generate a curve falloff along a hit number axis. If, for instance, the busyness value is 0.5, the curve will halve for each extra hit added, making it half as likely to add a new hit recursively. 0.9 will result in many hits being added, while 0.2 will make it less likely that any extra hit is added. A low busyness on snare and a high busyness on closed hihats would be more common.
+- Should one more hit be added? A “oneMoreHit” function runs to check if one more hit should be added. This uses the “busyness” variable to generate a curve falloff along a hit number axis. If, for instance, the busyness value is 0.5, the curve will halve for each extra hit added, making it half as likely to add a new hit recursively. 0.9 will result in many hits being added, while 0.2 will make it less likely that any extra hit is added. A low busyness on snare and a high busyness on closed hihats would be more common. It also uses a "contribution" factor, based on how many variable hits are actually in the template pattern (many hits to chose from usually means more hits should occur).
+
+https://github.com/MariusIrgens/LoopPedal/blob/a50a74c27e1bdc3f48690f88fd667be2349ab218/LoopPedal/Sequencer.cpp#L145-L158
+
 - A random hit location is drawn from the template distribution array. The distribution array is the current drum sound variable array from the template in use. Common hits are more represented in the array, and therefore more likely to get selected than occasional and rare hits. When a hit is picked, all instances of it are removed from the array, resulting in a “picking without replacement” algorithm.
 
 # Randomized drum sound synthesis
