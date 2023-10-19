@@ -64,6 +64,4 @@ The looper is pretty basic: if record is triggered (left footswitch), it will st
 # Interaction
 https://github.com/MariusIrgens/LoopPedal/blob/a50a74c27e1bdc3f48690f88fd667be2349ab218/LoopPedal/InteractionManager.cpp
 
-The interactionManager contains all the input and output pins. Interrupts wil trigger functionality in the systemController.
-
-
+The interactionManager contains all the input and output pins. Interrupts wil trigger functionality in the systemController. If you need to change any pin numbers, you can do it in the header file.
