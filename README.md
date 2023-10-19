@@ -44,7 +44,7 @@ In the sequence generator, “always” hits are added instantly. Afterwards, ex
 
 https://github.com/MariusIrgens/LoopPedal/blob/a50a74c27e1bdc3f48690f88fd667be2349ab218/LoopPedal/Sequencer.cpp#L160-L173
 
-- Should one more hit be added? A “oneMoreHit” function runs to check if one more hit should be added. This uses the “busyness” variable to generate a curve falloff along a hit number axis. If, for instance, the busyness value is 0.5, the curve will halve for each extra hit added, making it half as likely to add a new hit recursively. 0.9 will result in many hits being added, while 0.2 will make it less likely that any extra hit is added. A low busyness on snare and a high busyness on closed hihats would be more common. It also adds a "contribution" factor, based on how many variable hits are actually in the template pattern (many hits to chose from usually means more hits should occur).
+- Should one more hit be added? A “oneMoreHit” function runs to check if one more hit should be added. This uses the “busyness” variable to generate a curve falloff along a hit number axis. If, for instance, the busyness value is 0.5, the curve will halve for each extra hit added, making it half as likely to add a new hit recursively. 0.9 will result in many hits added, while 0.2 will result in few (if any) hits added. A low busyness on snare and a high busyness on closed hihats would be more common. It also adds a "contribution" factor, based on how many variable hits are actually in the template pattern (more hits to chose from usually means more hits should occur as well).
 
 https://github.com/MariusIrgens/LoopPedal/blob/a50a74c27e1bdc3f48690f88fd667be2349ab218/LoopPedal/Sequencer.cpp#L145-L158
 
