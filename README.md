@@ -1,5 +1,6 @@
 # Loop Pedal with procedurally generated rythms and drum synthesis
-Using Teensy 4.0 and PJRC Audio Adapter Board 
+Using Teensy 4.0 and PJRC Audio Adapter Board.  
+Video demo: https://youtu.be/IN8f8u1ViDo
 
 # Pedal overview
 ![pedalOverview](https://github.com/MariusIrgens/LoopPedal/assets/78429226/f668eea8-f432-497c-9add-428f51fd7747)
